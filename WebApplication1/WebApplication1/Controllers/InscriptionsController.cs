@@ -33,6 +33,7 @@ namespace WebApplication1.Controllers
             {
                 return HttpNotFound();
             }
+                        
             return View(inscription);
         }
 

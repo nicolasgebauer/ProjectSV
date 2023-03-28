@@ -19,7 +19,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Comunne)
+            Comuna
         </dt>
 
         <dd>
@@ -27,7 +27,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Block)
+            Manzana
         </dt>
 
         <dd>
@@ -35,7 +35,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Site)
+            Predio
         </dt>
 
         <dd>
@@ -43,7 +43,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Page)
+            Foja
         </dt>
 
         <dd>
@@ -51,7 +51,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.InscriptionNumber)
+            Numero de Inscripción
         </dt>
 
         <dd>
@@ -59,13 +59,70 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.InscriptionDate)
+            Fecha de Inscripción
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.InscriptionDate)
         </dd>
-
+        <dt>
+            Enajenantes
+        </dt>
+        <dd>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>RUT Enajenante</th>
+                        <th>% de Derecho</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var alienator in Model.Alienators)
+                    {
+                        <tr>
+                            <td>@alienator.Person.Rut</td>
+                            @if (alienator.Percentage == -1)
+                            {
+                                <td> </td>
+                            }
+                            else
+                            {
+                                <td>@alienator.Percentage</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </dd>
+        <dt>
+            Adquirientes
+        </dt>
+        <dd>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>RUT Adquiriente</th>
+                        <th>% de Derecho</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var acquirer in Model.Acquirers)
+                    {
+                        <tr>
+                            <td>@acquirer.Person.Rut</td>
+                            @if (acquirer.Percentage == -1)
+                            {
+                                <td> </td>
+                            }
+                            else
+                            {
+                                <td>@acquirer.Percentage</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </dd>
     </dl>
 </div>
 <p>
