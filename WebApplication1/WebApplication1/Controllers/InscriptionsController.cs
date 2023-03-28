@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -46,12 +47,51 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "AtentionNumber,CNE,Comunne,Block,Site,Page,InscriptionNumber,InscriptionDate")] Inscription inscription)
+        public ActionResult Create([Bind(Include = "AtentionNumber,CNE,Comunne,Block,Site,Page,InscriptionNumber,InscriptionDate")] Inscription inscription, string users_info)
         {
             if (ModelState.IsValid)
             {
                 db.Inscriptions.Add(inscription);
                 db.SaveChanges();
+                var AllUsers = JObject.Parse(users_info);
+                if (AllUsers.ContainsKey("alienators_users"))
+                {
+                    var AlienatorsUsers = AllUsers["alienators_users"];
+
+                    foreach (var alienator_info in AlienatorsUsers)
+                    {
+                        Alienator alienator = new Alienator();
+                        Person person = new Person();
+                        person.Rut = alienator_info[0].ToString();
+                        db.People.Add(person);
+                        db.SaveChanges();   
+                        alienator.AtentionNumber = inscription.AtentionNumber;
+                        alienator.Rut = person.Rut;
+                        alienator.Percentage = Convert.ToDouble(alienator_info[1]);
+                        db.Alienators.Add(alienator);
+                        db.SaveChanges();
+
+                    }
+                }
+                if (AllUsers.ContainsKey("acquirers_users"))
+                {
+                    var AcquirersUsers = AllUsers["acquirers_users"];
+
+                    foreach (var acquirer_info in AcquirersUsers)
+                    {
+                        Acquirer acquirer = new Acquirer();
+                        Person person = new Person();
+                        person.Rut = acquirer_info[0].ToString();
+                        db.People.Add(person);
+                        db.SaveChanges();
+                        acquirer.AtentionNumber = inscription.AtentionNumber;
+                        acquirer.Rut = person.Rut;
+                        acquirer.Percentage = Convert.ToDouble(acquirer_info[1]);
+                        db.Acquirers.Add(acquirer);
+                        db.SaveChanges();
+
+                    }
+                }
                 return RedirectToAction("Index");
             }
 
