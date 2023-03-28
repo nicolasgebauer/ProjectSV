@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="BienesRaicesDBModelStoreContainer" CdmEntityContainer="BienesRaicesDBEntities">
+    <EntitySetMapping Name="Acquirers">
+      <EntityTypeMapping TypeName="BienesRaicesDBModel.Acquirer">
+        <MappingFragment StoreEntitySet="Acquirer">
+          <ScalarProperty Name="AtentionNumber" ColumnName="AtentionNumber" />
+          <ScalarProperty Name="Rut" ColumnName="Rut" />
+          <ScalarProperty Name="Percentage" ColumnName="Percentage" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Alienators">
+      <EntityTypeMapping TypeName="BienesRaicesDBModel.Alienator">
+        <MappingFragment StoreEntitySet="Alienator">
+          <ScalarProperty Name="AtentionNumber" ColumnName="AtentionNumber" />
+          <ScalarProperty Name="Rut" ColumnName="Rut" />
+          <ScalarProperty Name="Percentage" ColumnName="Percentage" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Inscriptions">
+      <EntityTypeMapping TypeName="BienesRaicesDBModel.Inscription">
+        <MappingFragment StoreEntitySet="Inscription">
+          <ScalarProperty Name="AtentionNumber" ColumnName="AtentionNumber" />
+          <ScalarProperty Name="CNE" ColumnName="CNE" />
+          <ScalarProperty Name="Comunne" ColumnName="Comunne" />
+          <ScalarProperty Name="Block" ColumnName="Block" />
+          <ScalarProperty Name="Site" ColumnName="Site" />
+          <ScalarProperty Name="Page" ColumnName="Page" />
+          <ScalarProperty Name="InscriptionNumber" ColumnName="InscriptionNumber" />
+          <ScalarProperty Name="InscriptionDate" ColumnName="InscriptionDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Multyproperties">
+      <EntityTypeMapping TypeName="BienesRaicesDBModel.Multyproperty">
+        <MappingFragment StoreEntitySet="Multyproperty">
+          <ScalarProperty Name="Comunne" ColumnName="Comunne" />
+          <ScalarProperty Name="Block" ColumnName="Block" />
+          <ScalarProperty Name="Site" ColumnName="Site" />
+          <ScalarProperty Name="Rut" ColumnName="Rut" />
+          <ScalarProperty Name="Percentage" ColumnName="Percentage" />
+          <ScalarProperty Name="Page" ColumnName="Page" />
+          <ScalarProperty Name="InscriptionNumber" ColumnName="InscriptionNumber" />
+          <ScalarProperty Name="InscriptionYear" ColumnName="InscriptionYear" />
+          <ScalarProperty Name="InscriptionDate" ColumnName="InscriptionDate" />
+          <ScalarProperty Name="StartCurrencyYear" ColumnName="StartCurrencyYear" />
+          <ScalarProperty Name="EndCurrencyYear" ColumnName="EndCurrencyYear" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="People">
+      <EntityTypeMapping TypeName="BienesRaicesDBModel.Person">
+        <MappingFragment StoreEntitySet="Person">
+          <ScalarProperty Name="Rut" ColumnName="Rut" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

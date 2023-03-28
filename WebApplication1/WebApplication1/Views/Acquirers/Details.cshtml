@@ -1,0 +1,42 @@
+﻿@model WebApplication1.Models.Acquirer
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Acquirer</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Percentage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Percentage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Inscription.CNE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Inscription.CNE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Person.Rut)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Person.Rut)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

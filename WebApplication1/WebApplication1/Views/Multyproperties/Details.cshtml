@@ -1,0 +1,74 @@
+﻿@model WebApplication1.Models.Multyproperty
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Multyproperty</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Percentage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Percentage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Page)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Page)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InscriptionNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InscriptionNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InscriptionYear)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InscriptionYear)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InscriptionDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InscriptionDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartCurrencyYear)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartCurrencyYear)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EndCurrencyYear)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EndCurrencyYear)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

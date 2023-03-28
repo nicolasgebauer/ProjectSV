@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="BienesRaicesDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Acquirer">
+    <Key>
+      <PropertyRef Name="AtentionNumber" />
+      <PropertyRef Name="Rut" />
+    </Key>
+    <Property Name="AtentionNumber" Type="int" Nullable="false" />
+    <Property Name="Rut" Type="varchar" MaxLength="12" Nullable="false" />
+    <Property Name="Percentage" Type="float" />
+  </EntityType>
+  <EntityType Name="Alienator">
+    <Key>
+      <PropertyRef Name="AtentionNumber" />
+      <PropertyRef Name="Rut" />
+    </Key>
+    <Property Name="AtentionNumber" Type="int" Nullable="false" />
+    <Property Name="Rut" Type="varchar" MaxLength="12" Nullable="false" />
+    <Property Name="Percentage" Type="float" />
+  </EntityType>
+  <EntityType Name="Inscription">
+    <Key>
+      <PropertyRef Name="AtentionNumber" />
+    </Key>
+    <Property Name="AtentionNumber" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CNE" Type="varchar" MaxLength="29" />
+    <Property Name="Comunne" Type="varchar" MaxLength="50" />
+    <Property Name="Block" Type="varchar" MaxLength="50" />
+    <Property Name="Site" Type="varchar" MaxLength="50" />
+    <Property Name="Page" Type="varchar" MaxLength="50" />
+    <Property Name="InscriptionNumber" Type="varchar" MaxLength="50" />
+    <Property Name="InscriptionDate" Type="date" />
+  </EntityType>
+  <EntityType Name="Multyproperty">
+    <Key>
+      <PropertyRef Name="Comunne" />
+      <PropertyRef Name="Block" />
+      <PropertyRef Name="Site" />
+      <PropertyRef Name="Rut" />
+    </Key>
+    <Property Name="Comunne" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Block" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Site" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Rut" Type="varchar" MaxLength="12" Nullable="false" />
+    <Property Name="Percentage" Type="float" />
+    <Property Name="Page" Type="varchar" MaxLength="50" />
+    <Property Name="InscriptionNumber" Type="varchar" MaxLength="50" />
+    <Property Name="InscriptionYear" Type="int" />
+    <Property Name="InscriptionDate" Type="date" />
+    <Property Name="StartCurrencyYear" Type="int" />
+    <Property Name="EndCurrencyYear" Type="int" />
+  </EntityType>
+  <EntityType Name="Person">
+    <Key>
+      <PropertyRef Name="Rut" />
+    </Key>
+    <Property Name="Rut" Type="varchar" MaxLength="12" Nullable="false" />
+  </EntityType>
+  <Association Name="FK__Acquirer__Atenti__4222D4EF">
+    <End Role="Inscription" Type="Self.Inscription" Multiplicity="1" />
+    <End Role="Acquirer" Type="Self.Acquirer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Inscription">
+        <PropertyRef Name="AtentionNumber" />
+      </Principal>
+      <Dependent Role="Acquirer">
+        <PropertyRef Name="AtentionNumber" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Acquirer__Rut__412EB0B6">
+    <End Role="Person" Type="Self.Person" Multiplicity="1" />
+    <End Role="Acquirer" Type="Self.Acquirer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Person">
+        <PropertyRef Name="Rut" />
+      </Principal>
+      <Dependent Role="Acquirer">
+        <PropertyRef Name="Rut" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Alienator__Atent__3E52440B">
+    <End Role="Inscription" Type="Self.Inscription" Multiplicity="1" />
+    <End Role="Alienator" Type="Self.Alienator" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Inscription">
+        <PropertyRef Name="AtentionNumber" />
+      </Principal>
+      <Dependent Role="Alienator">
+        <PropertyRef Name="AtentionNumber" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Alienator__Rut__3D5E1FD2">
+    <End Role="Person" Type="Self.Person" Multiplicity="1" />
+    <End Role="Alienator" Type="Self.Alienator" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Person">
+        <PropertyRef Name="Rut" />
+      </Principal>
+      <Dependent Role="Alienator">
+        <PropertyRef Name="Rut" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="BienesRaicesDBModelStoreContainer">
+    <EntitySet Name="Acquirer" EntityType="Self.Acquirer" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Alienator" EntityType="Self.Alienator" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Inscription" EntityType="Self.Inscription" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Multyproperty" EntityType="Self.Multyproperty" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__Acquirer__Atenti__4222D4EF" Association="Self.FK__Acquirer__Atenti__4222D4EF">
+      <End Role="Inscription" EntitySet="Inscription" />
+      <End Role="Acquirer" EntitySet="Acquirer" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Acquirer__Rut__412EB0B6" Association="Self.FK__Acquirer__Rut__412EB0B6">
+      <End Role="Person" EntitySet="Person" />
+      <End Role="Acquirer" EntitySet="Acquirer" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Alienator__Atent__3E52440B" Association="Self.FK__Alienator__Atent__3E52440B">
+      <End Role="Inscription" EntitySet="Inscription" />
+      <End Role="Alienator" EntitySet="Alienator" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Alienator__Rut__3D5E1FD2" Association="Self.FK__Alienator__Rut__3D5E1FD2">
+      <End Role="Person" EntitySet="Person" />
+      <End Role="Alienator" EntitySet="Alienator" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

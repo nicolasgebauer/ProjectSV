@@ -1,0 +1,74 @@
+﻿@model WebApplication1.Models.Inscription
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Inscription</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CNE)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CNE)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Comunne)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Comunne)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Block)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Block)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Site)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Site)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Page)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Page)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InscriptionNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InscriptionNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InscriptionDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InscriptionDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.AtentionNumber }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
