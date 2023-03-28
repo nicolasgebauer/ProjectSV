@@ -9,11 +9,38 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+@using (Html.BeginForm("Index", "Multyproperties", FormMethod.Post, new { route = "Multyproperties/index", id = "filterForm" }))
+{
+    <p>
+        Commune: @Html.TextBox("commune")
+        Block: @Html.TextBox("block")
+        Site: @Html.TextBox("site")
+        Start Year: @Html.TextBox("startYear")
+        End Year: @Html.TextBox("endYear")
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
+    </p>
+}
 <table class="table">
     <tr>
+
         <th>
             @Html.DisplayNameFor(model => model.Percentage)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rut)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Comunne)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Block)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Site)
+        </th>
+
         <th>
             @Html.DisplayNameFor(model => model.Page)
         </th>
@@ -35,35 +62,58 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Percentage)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Page)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InscriptionNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InscriptionYear)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InscriptionDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StartCurrencyYear)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EndCurrencyYear)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Percentage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rut)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comunne)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Block)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Site)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Page)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InscriptionNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InscriptionYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InscriptionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartCurrencyYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndCurrencyYear)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+
+                @Html.ActionLink("Delete", "Delete", new { comunne = item.Comunne, block = item.Block, site = item.Site, rut = item.Rut })
+            </td>
+        </tr>
+    }
 
 </table>
+<script>function clearForm() {
+        document.getElementById("commune").value = "";
+        document.getElementById("block").value = "";
+        document.getElementById("site").value = "";
+        document.getElementById("startYear").value = "";
+        document.getElementById("endYear").value = "";
+        var form = document.getElementById("filterForm");
+        form.submit();
+    }</script>

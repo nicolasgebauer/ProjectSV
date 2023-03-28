@@ -1,23 +1,48 @@
-﻿using System;
+﻿using Microsoft.Ajax.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Razor.Parser.SyntaxTree;
 using WebApplication1.Models;
 
-namespace WebApplication1.Controllers
+
+namespace WebApplication2.Controllers
 {
     public class MultypropertiesController : Controller
     {
         private BienesRaicesDBEntities db = new BienesRaicesDBEntities();
 
         // GET: Multyproperties
-        public ActionResult Index()
+        public ActionResult Index(string commune, string block, string site, int? startyear, int? endyear)
         {
-            return View(db.Multyproperties.ToList());
+            IQueryable<Multyproperty> properties = db.Multyproperties;
+
+            // Verificar si los filtros han sido ingresados y si es así, utilizarlos en la consulta SQL
+            if (!string.IsNullOrEmpty(commune) && !string.IsNullOrEmpty(block) && !string.IsNullOrEmpty(site))
+            {
+
+                properties = properties.Where(p => p.Comunne == commune && p.Block == block && p.Site == site);
+            }
+
+            if (startyear.HasValue)
+            {
+                properties = properties.Where(p => p.StartCurrencyYear >= startyear.Value);
+            }
+
+            if (endyear.HasValue)
+            {
+                properties = properties.Where(p => p.EndCurrencyYear <= endyear.Value);
+            }
+
+            return View(properties.ToList());
         }
 
         // GET: Multyproperties/Details/5
@@ -90,13 +115,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Multyproperties/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(string comunne, string block, string site, string rut)
         {
-            if (id == null)
+            if (rut == null && comunne == null && block == null && site == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Multyproperty multyproperty = db.Multyproperties.Find(id);
+            Multyproperty multyproperty = db.Multyproperties.Find(comunne, block, site, rut);
             if (multyproperty == null)
             {
                 return HttpNotFound();
@@ -107,9 +132,9 @@ namespace WebApplication1.Controllers
         // POST: Multyproperties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string comunne, string block, string site, string rut)
         {
-            Multyproperty multyproperty = db.Multyproperties.Find(id);
+            Multyproperty multyproperty = db.Multyproperties.Find(comunne, block, site, rut);
             db.Multyproperties.Remove(multyproperty);
             db.SaveChanges();
             return RedirectToAction("Index");
