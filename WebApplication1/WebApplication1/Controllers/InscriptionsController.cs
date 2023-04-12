@@ -61,17 +61,9 @@ namespace WebApplication1.Controllers
 
                     foreach (var alienator_info in AlienatorsUsers)
                     {
-                        Alienator alienator = new Alienator();
-                        Person person = new Person();
-                        person.Rut = alienator_info[0].ToString();
-                        db.People.Add(person);
-                        db.SaveChanges();   
-                        alienator.AtentionNumber = inscription.AtentionNumber;
-                        alienator.Rut = person.Rut;
-                        alienator.Percentage = Convert.ToDouble(alienator_info[1]);
-                        db.Alienators.Add(alienator);
-                        db.SaveChanges();
-
+                        string rutPerson = alienator_info[0].ToString();
+                        double percentagePerson = Convert.ToDouble(alienator_info[1]);
+                        CreatePeople("alienators", rutPerson, percentagePerson, inscription);
                     }
                 }
                 if (AllUsers.ContainsKey("acquirers_users"))
@@ -80,16 +72,9 @@ namespace WebApplication1.Controllers
 
                     foreach (var acquirer_info in AcquirersUsers)
                     {
-                        Acquirer acquirer = new Acquirer();
-                        Person person = new Person();
-                        person.Rut = acquirer_info[0].ToString();
-                        db.People.Add(person);
-                        db.SaveChanges();
-                        acquirer.AtentionNumber = inscription.AtentionNumber;
-                        acquirer.Rut = person.Rut;
-                        acquirer.Percentage = Convert.ToDouble(acquirer_info[1]);
-                        db.Acquirers.Add(acquirer);
-                        db.SaveChanges();
+                        string rutPerson = acquirer_info[0].ToString();
+                        double percentagePerson = Convert.ToDouble(acquirer_info[1]);
+                        CreatePeople("acquirers", rutPerson, percentagePerson, inscription);
 
                     }
                 }
@@ -163,6 +148,38 @@ namespace WebApplication1.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+    public void CreatePeople(string typePeople, string rutPerson, double persentagePerson, Inscription inscription)
+        {
+            Person person;
+            Person instance = db.People.Find(rutPerson);
+            if (instance == null)
+            {
+                person = new Person();
+                person.Rut = rutPerson;
+                db.People.Add(person);
+                db.SaveChanges();
+            }
+            else person = instance;
+            
+            if (typePeople == "alienators") 
+            {
+                Alienator alienator = new Alienator();
+                alienator.AtentionNumber = inscription.AtentionNumber;
+                alienator.Rut = person.Rut;
+                alienator.Percentage = persentagePerson;
+                db.Alienators.Add(alienator);
+                db.SaveChanges();
+            }
+            else if (typePeople == "acquirers")
+            {
+                Acquirer acquirer = new Acquirer();
+                acquirer.AtentionNumber = inscription.AtentionNumber;
+                acquirer.Rut = person.Rut;
+                acquirer.Percentage = persentagePerson;
+                db.Acquirers.Add(acquirer);
+                db.SaveChanges();
+            }
         }
     }
 }

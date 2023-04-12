@@ -22,13 +22,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Alienators/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(string rut, int atentionnumber)
         {
-            if (id == null)
+            if (rut == null && atentionnumber == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Alienator alienator = db.Alienators.Find(id);
+            Alienator alienator = db.Alienators.Find(atentionnumber, rut);
             if (alienator == null)
             {
                 return HttpNotFound();
@@ -64,13 +64,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Alienators/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(string rut, int atentionnumber)
         {
-            if (id == null)
+            if (rut == null && atentionnumber == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Alienator alienator = db.Alienators.Find(id);
+            Alienator alienator = db.Alienators.Find(atentionnumber, rut);
             if (alienator == null)
             {
                 return HttpNotFound();
@@ -99,13 +99,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Alienators/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(string rut, int atentionnumber)
         {
-            if (id == null)
+            if (rut == null && atentionnumber == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Alienator alienator = db.Alienators.Find(id);
+            Alienator alienator = db.Alienators.Find(atentionnumber, rut);
             if (alienator == null)
             {
                 return HttpNotFound();
@@ -116,9 +116,9 @@ namespace WebApplication1.Controllers
         // POST: Alienators/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(string rut, int atentionnumber)
         {
-            Alienator alienator = db.Alienators.Find(id);
+            Alienator alienator = db.Alienators.Find(atentionnumber, rut);
             db.Alienators.Remove(alienator);
             db.SaveChanges();
             return RedirectToAction("Index");
