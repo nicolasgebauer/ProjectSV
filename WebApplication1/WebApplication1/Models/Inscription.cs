@@ -29,7 +29,7 @@ namespace WebApplication1.Models
         public string Site { get; set; }
         public string Page { get; set; }
         public string InscriptionNumber { get; set; }
-        public Nullable<System.DateTime> InscriptionDate { get; set; }
+        public DateTime InscriptionDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Acquirer> Acquirers { get; set; }

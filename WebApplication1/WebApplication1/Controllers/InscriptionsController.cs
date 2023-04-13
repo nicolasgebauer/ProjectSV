@@ -179,7 +179,25 @@ namespace WebApplication1.Controllers
                 acquirer.Percentage = persentagePerson;
                 db.Acquirers.Add(acquirer);
                 db.SaveChanges();
+                crateMultyproperty(rutPerson, persentagePerson, inscription);
             }
+        }
+        public void crateMultyproperty(string rutPerson, double persentagePerson, Inscription inscription)
+        {
+            Multyproperty multyproperty = new Multyproperty();
+            multyproperty.Comunne = inscription.Comunne;
+            multyproperty.Block = inscription.Block;
+            multyproperty.Site = inscription.Site;
+            multyproperty.AtentionNumber = inscription.AtentionNumber;
+            multyproperty.Page = inscription.Page;
+            multyproperty.InscriptionNumber = inscription.InscriptionNumber;
+            multyproperty.InscriptionDate = inscription.InscriptionDate;
+            multyproperty.InscriptionYear = inscription.InscriptionDate.Year;
+            multyproperty.StartCurrencyYear = inscription.InscriptionDate.Year;
+            multyproperty.Rut = rutPerson;
+            multyproperty.Percentage = persentagePerson;
+            db.Multyproperties.Add(multyproperty);
+            db.SaveChanges();   
         }
     }
 }
