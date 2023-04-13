@@ -1,136 +1,138 @@
-﻿@model WebApplication1.Models.Inscription
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/inscription/create")
+﻿    @model WebApplication1.Models.Inscription
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/inscription/create")
 
-}
-@{
-    ViewBag.Title = "Create";
-}
+    }
+    @{
+        ViewBag.Title = "Create";
+    }
 
-<h2>Inscripción</h2>
+    <h2>Inscripción</h2>
 
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <h4>LLenar los datos</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.CNE, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(model => model.CNE, new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Compraventa", Value = "Compraventa" },
-                new SelectListItem { Text = "Regularización de Patrimonio", Value = "Regularización de Patrimonio" }
-            }, "-- Seleccione CNE", new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.CNE, "", new { @class = "text-danger" })
-            @Html.ValidationMessageFor(model => model.CNE, "", new { @class = "text-danger" })
+    <div class="form-horizontal">
+        <h4>LLenar los datos</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.CNE, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.CNE, new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Compraventa", Value = "Compraventa" },
+                    new SelectListItem { Text = "Regularización de Patrimonio", Value = "Regularización de Patrimonio" }
+                }, "-- Seleccione CNE", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CNE, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.CNE, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @{
+            var comunas = new List<string> { "Estación Central", "Huechuraba", "Las Condes", "La Dehesa", "La Florida", "La Reina","Lo Barnechea","Lo Espejo","Ñuñoa", "Quilicura", "Santiago", "Vitacura" };
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comunne, "Comuna", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.Comunne, new SelectList(comunas), "-- Seleccione una comuna --", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Comunne, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Block, "Manzana", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Block, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Block, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Site, "Predio", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Site, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Site, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Page, "Foja", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Page, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Page, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.InscriptionNumber, "Numero de Inscripción", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.InscriptionNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.InscriptionNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.InscriptionDate, "Fecha de Inscripción", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.InscriptionDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                @Html.ValidationMessageFor(model => model.InscriptionDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <h5>Enajenantes:</h5>
+        <div class="form-group">
+            <input type="text" class="form-control" id="rut_alienator" placeholder="RUT Enajenante">
+            <input type="number" class="form-control" id="percent_alienator" min="1" max="100" placeholder="% de Derecho">
+            <input type="checkbox" class="form-check-input" id="not_percent_alienator"> Sin Porcentaje de Derecho
+            <button type="button" class="btn btn-outline-primary" id="new_alienator">Agregar Enajenante</button>
+        </div>
+
+        <div class="col-md-6">
+            <table class="table table-bordered" id="alienators">
+                <thead>
+                    <tr>
+                        <th>RUT Enajenante</th>
+                        <th>% de Derecho</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <br />
+        <h5>Adquirientes:</h5>
+        <div class="form-group">
+            <input type="text" class="form-control" id="rut_acquirer" placeholder="RUT Enajenante">
+            <input type="number" class="form-control" id="percent_acquirer" min="1" max="100" placeholder="% de Derecho">
+            <input type="checkbox" class="form-check-input" id="not_percent_acquirer"> Sin Porcentaje de Derecho
+            <button type="button" class="btn btn-outline-primary" id="new_acquirer">Agregar Adquiriente</button>
+        </div>
+
+        <div class="col-md-6">
+            <table class="table table-bordered" id="acquirers">
+                <thead>
+                    <tr>
+                        <th>RUT Adquiriente</th>
+                        <th>% de Derecho</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button id="submit_button" name="users_info" type="submit" value="" class="btn btn-default">Enviar</button>
+            </div>
         </div>
     </div>
+    }
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Comunne, "Comuna", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Comunne, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Comunne, "", new { @class = "text-danger" })
-        </div>
+    <div>
+        @Html.ActionLink("Back to List", "Index")
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Block, "Manzana", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Block, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Block, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Site, "Predio", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Site, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Site, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Page, "Foja", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Page, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Page, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.InscriptionNumber, "Numero de Inscripción", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.InscriptionNumber, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.InscriptionNumber, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.InscriptionDate, "Fecha de Inscripción", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.InscriptionDate, new { htmlAttributes = new { @class = "form-control", type = "date" } })
-            @Html.ValidationMessageFor(model => model.InscriptionDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <br />
-    <h5>Enajenantes:</h5>
-    <div class="form-group">
-        <input type="text" class="form-control" id="rut_alienator" placeholder="RUT Enajenante">
-        <input type="number" class="form-control" id="percent_alienator" min="1" max="100" placeholder="% de Derecho">
-        <input type="checkbox" class="form-check-input" id="not_percent_alienator"> Sin Porcentaje de Derecho
-        <button type="button" class="btn btn-outline-primary" id="new_alienator">Agregar Enajenante</button>
-    </div>
-
-    <div class="col-md-6">
-        <table class="table table-bordered" id="alienators">
-            <thead>
-                <tr>
-                    <th>RUT Enajenante</th>
-                    <th>% de Derecho</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <br />
-    <h5>Adquirientes:</h5>
-    <div class="form-group">
-        <input type="text" class="form-control" id="rut_acquirer" placeholder="RUT Enajenante">
-        <input type="number" class="form-control" id="percent_acquirer" min="1" max="100" placeholder="% de Derecho">
-        <input type="checkbox" class="form-check-input" id="not_percent_acquirer"> Sin Porcentaje de Derecho
-        <button type="button" class="btn btn-outline-primary" id="new_acquirer">Agregar Adquiriente</button>
-    </div>
-
-    <div class="col-md-6">
-        <table class="table table-bordered" id="acquirers">
-            <thead>
-                <tr>
-                    <th>RUT Adquiriente</th>
-                    <th>% de Derecho</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button id="submit_button" name="users_info" type="submit" value="" class="btn btn-default" >Enviar</button>
-        </div>
-    </div>
-</div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 
