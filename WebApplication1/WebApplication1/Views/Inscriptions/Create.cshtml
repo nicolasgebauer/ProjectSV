@@ -21,13 +21,14 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(model => model.CNE, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CNE, htmlAttributes: new { @class = "control-label col-md-2"})
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.CNE, new List<SelectListItem>
-                { 
+                {
+                    new SelectListItem { Text = "-- Seleccione CNE", Value = "" },
+                    new SelectListItem { Text = "Compraventa", Value = "Compraventa" },
                     new SelectListItem { Text = "Regularización de Patrimonio", Value = "Regularización de Patrimonio" }
-                }, "-- Seleccione CNE", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.CNE, "", new { @class = "text-danger" })
+                },new { @class = "form-control", id = "cne_select" })
                 @Html.ValidationMessageFor(model => model.CNE, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -82,25 +83,27 @@
             </div>
         </div>
         <br />
-        <h5>Enajenantes:</h5>
-        <div class="form-group">
-            <input type="text" class="form-control" id="rut_alienator" placeholder="RUT Enajenante">
-            <input type="number" class="form-control" id="percent_alienator" min="1" max="100" placeholder="% de Derecho">
-            <input type="checkbox" class="form-check-input" id="not_percent_alienator"> Sin Porcentaje de Derecho
-            <button type="button" class="btn btn-outline-primary" id="new_alienator">Agregar Enajenante</button>
-        </div>
+        <div id="all_alienators" style>
+            <h5>Enajenantes:</h5>
+            <div class="form-group">
+                <input type="text" class="form-control" id="rut_alienator" placeholder="RUT Enajenante">
+                <input type="number" class="form-control" id="percent_alienator" min="1" max="100" placeholder="% de Derecho">
+                <input type="checkbox" class="form-check-input" id="not_percent_alienator"> Sin Porcentaje de Derecho
+                <button type="button" class="btn btn-outline-primary" id="new_alienator">Agregar Enajenante</button>
+            </div>
 
-        <div class="col-md-6">
-            <table class="table table-bordered" id="alienators">
-                <thead>
-                    <tr>
-                        <th>RUT Enajenante</th>
-                        <th>% de Derecho</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="col-md-6">
+                <table class="table table-bordered" id="alienators">
+                    <thead>
+                        <tr>
+                            <th>RUT Enajenante</th>
+                            <th>% de Derecho</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <br />
         <h5>Adquirientes:</h5>
@@ -108,7 +111,7 @@
             <input type="text" class="form-control" id="rut_acquirer" placeholder="RUT Enajenante">
             <input type="number" class="form-control" id="percent_acquirer" min="1" max="100" placeholder="% de Derecho">
             <input type="checkbox" class="form-check-input" id="not_percent_acquirer"> Sin Porcentaje de Derecho
-            <button type="button" class="btn btn-outline-primary" id="add_acquirer">Agregar Adquiriente</button>
+            <button type="button" class="btn btn-outline-primary" id="new_acquirer">Agregar Adquiriente</button>
         </div>
 
         <div class="col-md-6">

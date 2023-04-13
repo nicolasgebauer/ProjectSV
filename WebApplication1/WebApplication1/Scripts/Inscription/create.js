@@ -3,20 +3,22 @@
     acquirers_users: []
 }
 
-const NewAlienator = document.querySelector("#new_alienator")
-const AlienatorRUT = document.querySelector("#rut_alienator")
 
-const PercentAlienator = document.querySelector("#percent_alienator")
-const NotPercentAlienator = document.querySelector("#not_percent_alienator")
+const NewAlienator = document.querySelector("#new_alienator");
+const AlienatorRUT = document.querySelector("#rut_alienator");
+
+const PercentAlienator = document.querySelector("#percent_alienator");
+const NotPercentAlienator = document.querySelector("#not_percent_alienator");
 const AlienatorTable = document.querySelector("#alienators").getElementsByTagName("tbody")[0];
 
-const NewAcquirer = document.querySelector("#new_acquirer")
-const AcquirerRUT = document.querySelector("#rut_acquirer")
-const PercentAcquirer = document.querySelector("#percent_acquirer")
-const NotPercentAcquirer = document.querySelector("#not_percent_acquirer")
+const NewAcquirer = document.querySelector("#new_acquirer");
+const AcquirerRUT = document.querySelector("#rut_acquirer");
+const PercentAcquirer = document.querySelector("#percent_acquirer");
+const NotPercentAcquirer = document.querySelector("#not_percent_acquirer");
 const AcquirerTable = document.querySelector("#acquirers").getElementsByTagName("tbody")[0];
 
-const SubmitButtonInscription = document.querySelector("#submit_button")
+const SubmitButtonInscription = document.querySelector("#submit_button");
+
 
 NotPercentAlienator.addEventListener('change', () => {
     if (NotPercentAlienator.checked) {
@@ -35,7 +37,7 @@ NotPercentAcquirer.addEventListener('change', () => {
 });
 
 NewAlienator.addEventListener('click', () => {
-    
+    console.log("aca");
     const NewRowAlienator = AlienatorTable.insertRow()
     const RutCellAlienator = NewRowAlienator.insertCell()
     const PercentCellAlienator = NewRowAlienator.insertCell()

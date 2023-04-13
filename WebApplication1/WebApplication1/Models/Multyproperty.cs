@@ -25,5 +25,8 @@ namespace WebApplication1.Models
         public Nullable<System.DateTime> InscriptionDate { get; set; }
         public Nullable<int> StartCurrencyYear { get; set; }
         public Nullable<int> EndCurrencyYear { get; set; }
+        public int AtentionNumber { get; set; }
+    
+        public virtual Inscription Inscription { get; set; }
     }
 }

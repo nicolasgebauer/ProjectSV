@@ -14,6 +14,7 @@
         <AssociationConnector Association="BienesRaicesDBModel.FK__Acquirer__Rut__412EB0B6" ManuallyRouted="false" />
         <AssociationConnector Association="BienesRaicesDBModel.FK__Alienator__Atent__3E52440B" ManuallyRouted="false" />
         <AssociationConnector Association="BienesRaicesDBModel.FK__Alienator__Rut__3D5E1FD2" ManuallyRouted="false" />
+        <AssociationConnector Association="BienesRaicesDBModel.FK__Multyprop__Atent__4316F928" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

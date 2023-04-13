@@ -19,6 +19,7 @@ namespace WebApplication1.Models
         {
             this.Acquirers = new HashSet<Acquirer>();
             this.Alienators = new HashSet<Alienator>();
+            this.Multyproperties = new HashSet<Multyproperty>();
         }
     
         public int AtentionNumber { get; set; }
@@ -34,5 +35,7 @@ namespace WebApplication1.Models
         public virtual ICollection<Acquirer> Acquirers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Alienator> Alienators { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Multyproperty> Multyproperties { get; set; }
     }
 }

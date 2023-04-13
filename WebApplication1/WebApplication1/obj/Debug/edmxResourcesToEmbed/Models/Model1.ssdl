@@ -37,6 +37,7 @@
       <PropertyRef Name="Block" />
       <PropertyRef Name="Site" />
       <PropertyRef Name="Rut" />
+      <PropertyRef Name="AtentionNumber" />
     </Key>
     <Property Name="Comunne" Type="varchar" MaxLength="50" Nullable="false" />
     <Property Name="Block" Type="varchar" MaxLength="50" Nullable="false" />
@@ -49,6 +50,7 @@
     <Property Name="InscriptionDate" Type="date" />
     <Property Name="StartCurrencyYear" Type="int" />
     <Property Name="EndCurrencyYear" Type="int" />
+    <Property Name="AtentionNumber" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Person">
     <Key>
@@ -56,7 +58,7 @@
     </Key>
     <Property Name="Rut" Type="varchar" MaxLength="12" Nullable="false" />
   </EntityType>
-  <Association Name="FK__Acquirer__Atenti__4222D4EF">
+  <Association Name="FK__Acquirer__Atenti__403A8C7D">
     <End Role="Inscription" Type="Self.Inscription" Multiplicity="1" />
     <End Role="Acquirer" Type="Self.Acquirer" Multiplicity="*" />
     <ReferentialConstraint>
@@ -68,7 +70,7 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK__Acquirer__Rut__412EB0B6">
+  <Association Name="FK__Acquirer__Rut__3F466844">
     <End Role="Person" Type="Self.Person" Multiplicity="1" />
     <End Role="Acquirer" Type="Self.Acquirer" Multiplicity="*" />
     <ReferentialConstraint>
@@ -80,7 +82,7 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK__Alienator__Atent__3E52440B">
+  <Association Name="FK__Alienator__Atent__3C69FB99">
     <End Role="Inscription" Type="Self.Inscription" Multiplicity="1" />
     <End Role="Alienator" Type="Self.Alienator" Multiplicity="*" />
     <ReferentialConstraint>
@@ -92,7 +94,7 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK__Alienator__Rut__3D5E1FD2">
+  <Association Name="FK__Alienator__Rut__3B75D760">
     <End Role="Person" Type="Self.Person" Multiplicity="1" />
     <End Role="Alienator" Type="Self.Alienator" Multiplicity="*" />
     <ReferentialConstraint>
@@ -101,6 +103,18 @@
       </Principal>
       <Dependent Role="Alienator">
         <PropertyRef Name="Rut" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Multyprop__Atent__4316F928">
+    <End Role="Inscription" Type="Self.Inscription" Multiplicity="1" />
+    <End Role="Multyproperty" Type="Self.Multyproperty" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Inscription">
+        <PropertyRef Name="AtentionNumber" />
+      </Principal>
+      <Dependent Role="Multyproperty">
+        <PropertyRef Name="AtentionNumber" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -110,21 +124,25 @@
     <EntitySet Name="Inscription" EntityType="Self.Inscription" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Multyproperty" EntityType="Self.Multyproperty" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
-    <AssociationSet Name="FK__Acquirer__Atenti__4222D4EF" Association="Self.FK__Acquirer__Atenti__4222D4EF">
+    <AssociationSet Name="FK__Acquirer__Atenti__403A8C7D" Association="Self.FK__Acquirer__Atenti__403A8C7D">
       <End Role="Inscription" EntitySet="Inscription" />
       <End Role="Acquirer" EntitySet="Acquirer" />
     </AssociationSet>
-    <AssociationSet Name="FK__Acquirer__Rut__412EB0B6" Association="Self.FK__Acquirer__Rut__412EB0B6">
+    <AssociationSet Name="FK__Acquirer__Rut__3F466844" Association="Self.FK__Acquirer__Rut__3F466844">
       <End Role="Person" EntitySet="Person" />
       <End Role="Acquirer" EntitySet="Acquirer" />
     </AssociationSet>
-    <AssociationSet Name="FK__Alienator__Atent__3E52440B" Association="Self.FK__Alienator__Atent__3E52440B">
+    <AssociationSet Name="FK__Alienator__Atent__3C69FB99" Association="Self.FK__Alienator__Atent__3C69FB99">
       <End Role="Inscription" EntitySet="Inscription" />
       <End Role="Alienator" EntitySet="Alienator" />
     </AssociationSet>
-    <AssociationSet Name="FK__Alienator__Rut__3D5E1FD2" Association="Self.FK__Alienator__Rut__3D5E1FD2">
+    <AssociationSet Name="FK__Alienator__Rut__3B75D760" Association="Self.FK__Alienator__Rut__3B75D760">
       <End Role="Person" EntitySet="Person" />
       <End Role="Alienator" EntitySet="Alienator" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Multyprop__Atent__4316F928" Association="Self.FK__Multyprop__Atent__4316F928">
+      <End Role="Inscription" EntitySet="Inscription" />
+      <End Role="Multyproperty" EntitySet="Multyproperty" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

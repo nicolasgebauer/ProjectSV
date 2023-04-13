@@ -36,6 +36,7 @@
     <Property Name="InscriptionDate" Type="DateTime" Precision="0" />
     <NavigationProperty Name="Acquirers" Relationship="Self.FK__Acquirer__Atenti__4222D4EF" FromRole="Inscription" ToRole="Acquirer" />
     <NavigationProperty Name="Alienators" Relationship="Self.FK__Alienator__Atent__3E52440B" FromRole="Inscription" ToRole="Alienator" />
+    <NavigationProperty Name="Multyproperties" Relationship="BienesRaicesDBModel.FK__Multyprop__Atent__4316F928" FromRole="Inscription" ToRole="Multyproperty" />
   </EntityType>
   <EntityType Name="Multyproperty">
     <Key>
@@ -43,6 +44,7 @@
       <PropertyRef Name="Block" />
       <PropertyRef Name="Site" />
       <PropertyRef Name="Rut" />
+      <PropertyRef Name="AtentionNumber" />
     </Key>
     <Property Name="Comunne" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="Block" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
@@ -55,6 +57,8 @@
     <Property Name="InscriptionDate" Type="DateTime" Precision="0" />
     <Property Name="StartCurrencyYear" Type="Int32" />
     <Property Name="EndCurrencyYear" Type="Int32" />
+    <Property Name="AtentionNumber" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Inscription" Relationship="BienesRaicesDBModel.FK__Multyprop__Atent__4316F928" FromRole="Multyproperty" ToRole="Inscription" />
   </EntityType>
   <EntityType Name="Person">
     <Key>
@@ -134,5 +138,21 @@
       <End Role="Person" EntitySet="People" />
       <End Role="Alienator" EntitySet="Alienators" />
     </AssociationSet>
+    <AssociationSet Name="FK__Multyprop__Atent__4316F928" Association="BienesRaicesDBModel.FK__Multyprop__Atent__4316F928">
+      <End Role="Inscription" EntitySet="Inscriptions" />
+      <End Role="Multyproperty" EntitySet="Multyproperties" />
+    </AssociationSet>
   </EntityContainer>
+  <Association Name="FK__Multyprop__Atent__4316F928">
+    <End Type="BienesRaicesDBModel.Inscription" Role="Inscription" Multiplicity="1" />
+    <End Type="BienesRaicesDBModel.Multyproperty" Role="Multyproperty" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Inscription">
+        <PropertyRef Name="AtentionNumber" />
+      </Principal>
+      <Dependent Role="Multyproperty">
+        <PropertyRef Name="AtentionNumber" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

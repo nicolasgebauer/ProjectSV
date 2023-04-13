@@ -36,6 +36,7 @@
     <EntitySetMapping Name="Multyproperties">
       <EntityTypeMapping TypeName="BienesRaicesDBModel.Multyproperty">
         <MappingFragment StoreEntitySet="Multyproperty">
+          <ScalarProperty Name="AtentionNumber" ColumnName="AtentionNumber" />
           <ScalarProperty Name="Comunne" ColumnName="Comunne" />
           <ScalarProperty Name="Block" ColumnName="Block" />
           <ScalarProperty Name="Site" ColumnName="Site" />
