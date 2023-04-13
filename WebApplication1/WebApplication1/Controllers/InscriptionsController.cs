@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
+using System.Linq;
 
 namespace WebApplication1.Controllers
 {
@@ -184,6 +185,23 @@ namespace WebApplication1.Controllers
         }
         public void crateMultyproperty(string rutPerson, double persentagePerson, Inscription inscription)
         {
+            List<Multyproperty> multyproperties = db.Multyproperties.Where(
+               mp => mp.EndCurrencyYear == null
+               && mp.Comunne == inscription.Comunne
+               && mp.Block == inscription.Block
+               && mp.Site == inscription.Site
+               && mp.AtentionNumber != inscription.AtentionNumber
+                ).OrderByDescending(mp => mp.InscriptionDate).ToList();
+            if (multyproperties.Count > 0)
+            {
+                foreach(Multyproperty currentsMultyproperties in multyproperties)
+                {
+                    currentsMultyproperties.EndCurrencyYear = inscription.InscriptionDate.Year;
+                    db.Entry(currentsMultyproperties);
+                    db.SaveChanges();
+                }
+                
+            }
             Multyproperty multyproperty = new Multyproperty();
             multyproperty.Comunne = inscription.Comunne;
             multyproperty.Block = inscription.Block;
