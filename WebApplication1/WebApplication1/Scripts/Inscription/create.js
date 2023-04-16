@@ -37,7 +37,6 @@ NotPercentAcquirer.addEventListener('change', () => {
 });
 
 NewAlienator.addEventListener('click', () => {
-    console.log("aca");
     const NewRowAlienator = AlienatorTable.insertRow()
     const RutCellAlienator = NewRowAlienator.insertCell()
     const PercentCellAlienator = NewRowAlienator.insertCell()
@@ -57,18 +56,46 @@ NewAlienator.addEventListener('click', () => {
     NotPercentAlienator.checked = false;
 });
 
-NewAcquirer.addEventListener('click', () => {
-    const NewRowAcquirer = AcquirerTable.insertRow()
-    const RutCellAcquirer = NewRowAcquirer.insertCell()
-    const PercentCellAcquirer = NewRowAcquirer.insertCell()
-    var rut = AcquirerRUT.value
-    var percent = PercentAcquirer.value
-    if (NotPercentAcquirer.checked) {
-        AllUsers.acquirers_users.push([rut, -1])
+NewAcquirer.addEventListener('click', (event) => {
+    const NewRowAcquirer = AcquirerTable.insertRow();
+    const RutCellAcquirer = NewRowAcquirer.insertCell();
+    const PercentCellAcquirer = NewRowAcquirer.insertCell();
+    var rut = AcquirerRUT.value;
+    var percent = PercentAcquirer.value;
+
+    if (rut.trim() === "") {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = "alert alert-info";
+        alertDiv.innerHTML = "Error: El campo RUT no puede ser vacío";
+        document.getElementById('acquirer_title').insertAdjacentElement('beforebegin', alertDiv);
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000); // remove after 3 seconds
+        event.preventDefault();
+        return;
+    } else if (NotPercentAcquirer.checked) {
+        AllUsers.acquirers_users.push([rut, -1]);
         RutCellAcquirer.innerHTML = rut;
         PercentCellAcquirer.innerHTML = "";
     } else {
-        AllUsers.acquirers_users.push([rut, percent])
+        // Check if the sum of percentages is greater than 100
+        let sum = parseInt(percent);
+        for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
+            sum += parseInt(AllUsers.acquirers_users[i][1]);
+        }
+        if (sum > 100) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = "alert alert-info";
+            alertDiv.innerHTML = "Error: La suma de porcentajes no puede superar el 100%";
+            document.getElementById('acquirer_title').insertAdjacentElement('beforebegin', alertDiv);
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000); // remove after 3 seconds
+            event.preventDefault();
+            return;
+        }
+        // Add the new acquirer
+        AllUsers.acquirers_users.push([rut, percent]);
         RutCellAcquirer.innerHTML = rut;
         PercentCellAcquirer.innerHTML = percent;
     }
@@ -76,6 +103,11 @@ NewAcquirer.addEventListener('click', () => {
     PercentAcquirer.value = "";
     NotPercentAcquirer.checked = false;
 });
+
+
+
+
+
 
 SubmitButtonInscription.addEventListener('click', () => {
     SubmitButtonInscription.value = JSON.stringify(AllUsers)
