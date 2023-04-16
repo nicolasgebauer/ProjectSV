@@ -22,7 +22,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Acquirers/Details/5
-        public ActionResult Details(string rut, int atentionnumber)
+        public ActionResult Details(string rut, int? atentionnumber)
         {
             if (rut == null && atentionnumber == null)
             {
@@ -64,7 +64,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Acquirers/Edit/5
-        public ActionResult Edit(string rut, int atentionnumber)
+        public ActionResult Edit(string rut, int? atentionnumber)
         {
             if (rut == null && atentionnumber == null)
             {
@@ -99,7 +99,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Acquirers/Delete/5
-        public ActionResult Delete(string rut, int atentionnumber)
+        public ActionResult Delete(string rut, int? atentionnumber)
         {
             if (rut == null && atentionnumber == null)
             {
@@ -116,7 +116,7 @@ namespace WebApplication1.Controllers
         // POST: Acquirers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string rut, int atentionnumber)
+        public ActionResult DeleteConfirmed(string rut, int? atentionnumber)
         {
             Acquirer acquirer = db.Acquirers.Find(atentionnumber, rut);
             db.Acquirers.Remove(acquirer);
