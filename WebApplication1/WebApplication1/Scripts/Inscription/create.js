@@ -49,7 +49,7 @@ NotPercentAlienator.addEventListener('change', () => {
 
 
 
-NewAlienator.addEventListener('click', () => {          
+NewAlienator.addEventListener('click', () => {
     const NewRowAlienator = AlienatorTable.insertRow()
     const RutCellAlienator = NewRowAlienator.insertCell()
     const PercentCellAlienator = NewRowAlienator.insertCell()
@@ -84,7 +84,7 @@ AcquirerRUT.addEventListener('input', (event) => { //Verifies if the RUT is not 
     }
 });
 
-PercentAcquirer.addEventListener('input', (event) => {  
+PercentAcquirer.addEventListener('input', (event) => {
     let sum = 0;
     const percent = parseInt(event.target.value);
 
