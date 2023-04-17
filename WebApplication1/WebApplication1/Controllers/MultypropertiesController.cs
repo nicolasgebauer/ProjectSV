@@ -21,7 +21,7 @@ namespace WebApplication2.Controllers
         private BienesRaicesDBEntities db = new BienesRaicesDBEntities();
 
         // GET: Multyproperties
-        public ActionResult Index(string commune, string block, string site, int? startyear, int? endyear)
+        public ActionResult Index(string commune, string block, string site, int? year)
         {
             IQueryable<Multyproperty> properties = db.Multyproperties;
 
@@ -32,15 +32,13 @@ namespace WebApplication2.Controllers
                 properties = properties.Where(p => p.Comunne == commune && p.Block == block && p.Site == site);
             }
 
-            if (startyear.HasValue)
+            if (year.HasValue)
             {
-                properties = properties.Where(p => p.StartCurrencyYear >= startyear.Value);
+                properties = properties.Where(
+                    p => p.StartCurrencyYear <= year.Value
+                    ).Where(p => p.EndCurrencyYear > year.Value || p.EndCurrencyYear == null);
             }
 
-            if (endyear.HasValue)
-            {
-                properties = properties.Where(p => p.EndCurrencyYear <= endyear.Value);
-            }
 
             return View(properties.ToList());
         }

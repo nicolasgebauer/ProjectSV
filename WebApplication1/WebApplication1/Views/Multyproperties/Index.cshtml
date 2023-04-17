@@ -16,8 +16,7 @@
         Commune: @Html.TextBox("commune")
         Block: @Html.TextBox("block")
         Site: @Html.TextBox("site")
-        Start Year: @Html.TextBox("startYear")
-        End Year: @Html.TextBox("endYear")
+        Year: @Html.TextBox("year")
         <button type="submit" class="btn btn-primary">Filter</button>
         <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
     </p>
@@ -112,8 +111,7 @@
         document.getElementById("commune").value = "";
         document.getElementById("block").value = "";
         document.getElementById("site").value = "";
-        document.getElementById("startYear").value = "";
-        document.getElementById("endYear").value = "";
+        document.getElementById("year").value = "";
         var form = document.getElementById("filterForm");
         form.submit();
     }</script>
