@@ -20,11 +20,12 @@ const AcquirerTable = document.querySelector("#acquirers").getElementsByTagName(
 const SubmitButtonInscription = document.querySelector("#submit_button");
 const errorDiv = document.createElement('div');
 errorDiv.className = "alert alert-info";
-errorDiv.innerHTML = "No se cumplen los requisitos";
+errorDiv.innerHTML = "Comprobar que el RUT no haya sido ingresado, que no tenga puntos ni guión y que la suma de porcentajes sea menor a 100";
 errorDiv.style.display = "none";
 NewAcquirer.insertAdjacentElement('afterend', errorDiv);
 const cneSelect = document.querySelector("#cne_select");
 const allAlienatorsDiv = document.querySelector("#all_alienators");
+const rutRegex = /^[0-9]+$/;
 
 
 cneSelect.addEventListener("change", () => {
@@ -46,13 +47,15 @@ NotPercentAlienator.addEventListener('change', () => {
 });
 
 
-NewAlienator.addEventListener('click', () => {
+
+
+NewAlienator.addEventListener('click', () => {          
     const NewRowAlienator = AlienatorTable.insertRow()
     const RutCellAlienator = NewRowAlienator.insertCell()
     const PercentCellAlienator = NewRowAlienator.insertCell()
     var rut = AlienatorRUT.value
     var percent = PercentAlienator.value
-    if (NotPercentAlienator.checked) {
+    if (NotPercentAlienator.checked) {              //Cases where 
         AllUsers.alienators_users.push([rut, -1])
         RutCellAlienator.innerHTML = rut;
         PercentCellAlienator.innerHTML = "";
@@ -66,11 +69,26 @@ NewAlienator.addEventListener('click', () => {
     NotPercentAlienator.checked = false;
 });
 
-PercentAcquirer.addEventListener('input', (event) => {
+AcquirerRUT.addEventListener('input', (event) => { //Verifies if the RUT is not repeated and if it only has numbers
+    const rut = event.target.value;
+    const rutExists = AllUsers.acquirers_users.some(user => user[0] === rut);
+    if (!rutRegex.test(rut)) {
+        disableButton();
+        showError();
+    } else if (rutExists) {
+        disableButton();
+        showError();
+    } else {
+        enableButton();
+        hideError();
+    }
+});
+
+PercentAcquirer.addEventListener('input', (event) => {  
     let sum = 0;
     const percent = parseInt(event.target.value);
 
-    if (isNaN(percent) || percent < 0 || percent > 100) {
+    if (isNaN(percent) || percent < 0 || percent > 100) { //checks if the sum of percentages is greater than 100
         disableButton();
         showError();
         return;
@@ -93,6 +111,8 @@ PercentAcquirer.addEventListener('input', (event) => {
     }
 });
 
+
+
 function disableButton() {
     NewAcquirer.disabled = true;
 }
@@ -106,9 +126,18 @@ function showError() {
 
 }
 
+
+
 function hideError() {
     errorDiv.style.display = "none";
 }
+
+
+
+function findRUT(element, rut) {
+    return element[0] === rut;
+}
+
 NewAcquirer.addEventListener('click', (event) => {
     const NewRowAcquirer = AcquirerTable.insertRow();
     const RutCellAcquirer = NewRowAcquirer.insertCell();
@@ -121,9 +150,9 @@ NewAcquirer.addEventListener('click', (event) => {
         RutCellAcquirer.innerHTML = rut;
         PercentCellAcquirer.innerHTML = "";
     } else {
-            AllUsers.acquirers_users.push([rut, percent]);
-            RutCellAcquirer.innerHTML = rut;
-            PercentCellAcquirer.innerHTML = percent;
+        AllUsers.acquirers_users.push([rut, percent]);
+        RutCellAcquirer.innerHTML = rut;
+        PercentCellAcquirer.innerHTML = percent;
     }
     AcquirerRUT.value = "";
     PercentAcquirer.value = "";

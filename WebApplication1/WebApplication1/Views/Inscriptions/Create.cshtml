@@ -19,7 +19,7 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>LLenar los datos</h4>
+        <h4>Llenar los datos</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -88,7 +88,7 @@
         <div id="all_alienators">
             <h5>Enajenantes:</h5>
             <div class="form-group">
-                <input type="text" class="form-control" id="rut_alienator" placeholder="RUT Enajenante">
+                <input type="text" class="form-control" id="rut_alienator" placeholder="RUT Enajenante (sin puntos ni guión)">
                 <input type="number" class="form-control" id="percent_alienator" min="1" max="100" placeholder="% de Derecho">
                 <input type="checkbox" class="form-check-input" id="not_percent_alienator"> Sin Porcentaje de Derecho
                 <button type="button" class="btn btn-outline-primary" id="new_alienator">Agregar Enajenante</button>
@@ -111,7 +111,7 @@
 
         <h5 id="acquirer_title">Adquirientes:</h5>
         <div class="form-group">
-            <input type="text" class="form-control" id="rut_acquirer" placeholder="RUT Enajenante">
+            <input type="text" class="form-control" id="rut_acquirer" placeholder="RUT Adquiriente (sin puntos ni guión)">
             <input type="number" class="form-control" id="percent_acquirer" min="1" max="100" placeholder="% de Derecho">
             <input type="checkbox" class="form-check-input" id="not_percent_acquirer"> Sin Porcentaje de Derecho
             <button type="button" class="btn btn-outline-primary" id="new_acquirer">Agregar Adquiriente</button>
