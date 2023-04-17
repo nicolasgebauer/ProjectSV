@@ -172,5 +172,30 @@ NotPercentAcquirer.addEventListener('change', () => {
 
 
 SubmitButtonInscription.addEventListener('click', () => {
+    let sum = 0
+    let countNotPercent = 0;
+    for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
+        const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
+        if (percentage !== -1) {
+            sum += percentage;
+
+        } else {
+            countNotPercent++;
+        }
+    }
+    if (sum < 100) {
+        const remainingPercent = 100 - sum;
+        if (countNotPercent > 0) {
+            const percentPerAcquirer = (remainingPercent / countNotPercent).toFixed(2);
+            for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
+                const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
+                if (percentage === -1) {
+                    AllUsers.acquirers_users[i][1] = percentPerAcquirer;
+                }
+            }
+
+        }
+    }
+
     SubmitButtonInscription.value = JSON.stringify(AllUsers)
 });

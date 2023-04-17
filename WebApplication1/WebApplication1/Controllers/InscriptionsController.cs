@@ -196,11 +196,15 @@ namespace WebApplication1.Controllers
             int? pastYear = null;
             bool ifCreateMultyproperty = true;
 
+            int yearOfStart;
+            if (inscription.InscriptionDate.Year < 2019) yearOfStart = 2019;
+            else yearOfStart = inscription.InscriptionDate.Year;
+
             if (multyproperties.Count > 0)
             {
-
+                
                 List<Multyproperty> multypropertiesSameYear = multyproperties.Where(
-                    mp => mp.InscriptionYear == inscription.InscriptionDate.Year
+                    mp => mp.StartCurrencyYear == yearOfStart
                     ).ToList();
                 if (multypropertiesSameYear.Count > 0)
                 {
@@ -223,8 +227,8 @@ namespace WebApplication1.Controllers
                 }
                 if (multyproperties.Count > 0) 
                 {
-                    nextYear = FindNextYear(inscription.InscriptionDate.Year, multyproperties);
-                    pastYear = FindPastYear(inscription.InscriptionDate.Year, multyproperties);
+                    nextYear = FindNextYear(yearOfStart, multyproperties);
+                    pastYear = FindPastYear(yearOfStart, multyproperties);
                     if (pastYear != null)
                     {
                         List<Multyproperty> multypropertiesToChange = multyproperties.Where(
@@ -232,7 +236,7 @@ namespace WebApplication1.Controllers
                             ).ToList();
                         foreach (Multyproperty pastMP in multypropertiesToChange)
                         {
-                            pastMP.EndCurrencyYear = inscription.InscriptionDate.Year;
+                            pastMP.EndCurrencyYear = yearOfStart;
                             db.Entry(pastMP);
                             db.SaveChanges();
                         }
@@ -252,10 +256,10 @@ namespace WebApplication1.Controllers
             multyproperty.InscriptionNumber = inscription.InscriptionNumber;
             multyproperty.InscriptionDate = inscription.InscriptionDate;
             multyproperty.InscriptionYear = inscription.InscriptionDate.Year;
-            multyproperty.StartCurrencyYear = inscription.InscriptionDate.Year;
+            multyproperty.StartCurrencyYear = yearOfStart;
             if (nextYear != null)
             {
-                Multyproperty nextMP = multyproperties.Find(mp => mp.InscriptionYear == nextYear);
+                Multyproperty nextMP = multyproperties.Find(mp => mp.StartCurrencyYear == nextYear);
                 multyproperty.EndCurrencyYear = nextMP.StartCurrencyYear;
             }
             multyproperty.Rut = rutPerson;
@@ -268,13 +272,13 @@ namespace WebApplication1.Controllers
         }
         public static int? FindNextYear(int year, List<Multyproperty> multiproperties)
         {
-            int? nextYear = multiproperties[0].InscriptionYear;
+            int? nextYear = multiproperties[0].StartCurrencyYear;
             if (nextYear < year) return null;
             foreach (Multyproperty mp in multiproperties)
             {
-                if (mp.InscriptionYear > year && (mp.InscriptionYear - year) < (nextYear - year))
+                if (mp.StartCurrencyYear > year && (mp.StartCurrencyYear - year) < (nextYear - year))
                 {
-                    nextYear = mp.InscriptionYear;
+                    nextYear = mp.StartCurrencyYear;
                 }
             }
             return nextYear;
@@ -283,13 +287,13 @@ namespace WebApplication1.Controllers
         public static int? FindPastYear(int year, List<Multyproperty> multiproperties)
         {
             int last = multiproperties.Count - 1;
-            int? pastYear = multiproperties[last].InscriptionYear;
+            int? pastYear = multiproperties[last].StartCurrencyYear;
             if (pastYear > year) return null;
             foreach (Multyproperty mp in multiproperties)
             {
-                if (mp.InscriptionYear < year && (year - mp.InscriptionYear) < (year - pastYear))
+                if (mp.StartCurrencyYear < year && (year - mp.StartCurrencyYear) < (year - pastYear))
                 {
-                    pastYear = mp.InscriptionYear;
+                    pastYear = mp.StartCurrencyYear;
                 }
             }
             return pastYear;
