@@ -198,26 +198,13 @@ namespace WebApplication1.Controllers
 
             if (multyproperties.Count > 0)
             {
-                nextYear = FindNextYear(inscription.InscriptionDate.Year, multyproperties);
-                pastYear = FindPastYear(inscription.InscriptionDate.Year, multyproperties);
-                if (pastYear != null)
-                {
-                    List<Multyproperty> multypropertiesToChange = multyproperties.Where(
-                        mp => mp.StartCurrencyYear == pastYear
-                        ).ToList();
-                    foreach (Multyproperty pastMP in multypropertiesToChange)
-                    {
-                        pastMP.EndCurrencyYear = inscription.InscriptionDate.Year;
-                        db.Entry(pastMP);
-                        db.SaveChanges();
-                    }
-                }
+
                 List<Multyproperty> multypropertiesSameYear = multyproperties.Where(
                     mp => mp.InscriptionYear == inscription.InscriptionDate.Year
                     ).ToList();
                 if (multypropertiesSameYear.Count > 0)
                 {
-                    foreach(Multyproperty sameYearMP in multypropertiesSameYear)
+                    foreach (Multyproperty sameYearMP in multypropertiesSameYear)
                     {
                         if (sameYearMP.InscriptionDate > inscription.InscriptionDate)
                         {
@@ -227,7 +214,32 @@ namespace WebApplication1.Controllers
                         db.Multyproperties.Remove(sameYearMP);
                         db.SaveChanges();
                     }
+                    multyproperties = db.Multyproperties.Where(
+                    mp => mp.Comunne == inscription.Comunne
+                    && mp.Block == inscription.Block
+                    && mp.Site == inscription.Site
+                    && mp.AtentionNumber != inscription.AtentionNumber
+                    ).OrderByDescending(mp => mp.InscriptionDate).ToList();
                 }
+                if (multyproperties.Count > 0) 
+                {
+                    nextYear = FindNextYear(inscription.InscriptionDate.Year, multyproperties);
+                    pastYear = FindPastYear(inscription.InscriptionDate.Year, multyproperties);
+                    if (pastYear != null)
+                    {
+                        List<Multyproperty> multypropertiesToChange = multyproperties.Where(
+                            mp => mp.StartCurrencyYear == pastYear
+                            ).ToList();
+                        foreach (Multyproperty pastMP in multypropertiesToChange)
+                        {
+                            pastMP.EndCurrencyYear = inscription.InscriptionDate.Year;
+                            db.Entry(pastMP);
+                            db.SaveChanges();
+                        }
+                    }
+
+                }
+                
             }
            
 
@@ -248,8 +260,11 @@ namespace WebApplication1.Controllers
             }
             multyproperty.Rut = rutPerson;
             multyproperty.Percentage = persentagePerson;
-            db.Multyproperties.Add(multyproperty);
-            db.SaveChanges();   
+            if (ifCreateMultyproperty == true)
+            {
+                db.Multyproperties.Add(multyproperty);
+                db.SaveChanges();   
+            }
         }
         public static int? FindNextYear(int year, List<Multyproperty> multiproperties)
         {
