@@ -153,15 +153,15 @@ namespace WebApplication1.Controllers
     public void CreatePeople(string typePeople, string rutPerson, double persentagePerson, Inscription inscription)
         {
             Person person;
-            Person instance = db.People.Find(rutPerson);
-            if (instance == null)
+            Person instancePerson = db.People.Find(rutPerson);
+            if (instancePerson == null)
             {
                 person = new Person();
                 person.Rut = rutPerson;
                 db.People.Add(person);
                 db.SaveChanges();
             }
-            else person = instance;
+            else person = instancePerson;
             
             if (typePeople == "alienators") 
             {

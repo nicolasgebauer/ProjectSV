@@ -6,7 +6,6 @@
 
 const NewAlienator = document.querySelector("#new_alienator");
 const AlienatorRUT = document.querySelector("#rut_alienator");
-
 const PercentAlienator = document.querySelector("#percent_alienator");
 const NotPercentAlienator = document.querySelector("#not_percent_alienator");
 const AlienatorTable = document.querySelector("#alienators").getElementsByTagName("tbody")[0];
@@ -26,7 +25,11 @@ NewAcquirer.insertAdjacentElement('afterend', errorDiv);
 const cneSelect = document.querySelector("#cne_select");
 const allAlienatorsDiv = document.querySelector("#all_alienators");
 const rutRegex = /^[0-9]+$/;
-
+const comunaValue = document.getElementById("Comunne").value;
+const blockValue = document.getElementById("Block").value;
+const siteValue = document.getElementById("Site").value;
+const pageValue = document.getElementById("Page").value;
+const inscriptionNumberValue = document.getElementById("InscriptionNumber").value;
 
 cneSelect.addEventListener("change", () => {
     if (cneSelect.value === "Regularización de Patrimonio") {
@@ -174,6 +177,11 @@ NotPercentAcquirer.addEventListener('change', () => {
 SubmitButtonInscription.addEventListener('click', () => {
     let sum = 0
     let countNotPercent = 0;
+    if (comunaValue === "" || blockValue === "" || siteValue === "" || pageValue === "" || inscriptionNumberValue === "") {
+        // Prevent the form from being submitted
+        event.preventDefault();
+        alert("Por favor, complete todos los campos antes de enviar el formulario.");
+    }
     for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
         const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
         if (percentage !== -1) {
