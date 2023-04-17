@@ -186,22 +186,35 @@ namespace WebApplication1.Controllers
         public void crateMultyproperty(string rutPerson, double persentagePerson, Inscription inscription)
         {
             List<Multyproperty> multyproperties = db.Multyproperties.Where(
-               mp => mp.EndCurrencyYear == null
-               && mp.Comunne == inscription.Comunne
+               mp => mp.Comunne == inscription.Comunne
                && mp.Block == inscription.Block
                && mp.Site == inscription.Site
                && mp.AtentionNumber != inscription.AtentionNumber
                 ).OrderByDescending(mp => mp.InscriptionDate).ToList();
+
+            int? nextYear = null;
+            int? pastYear = null;
+
             if (multyproperties.Count > 0)
             {
-                foreach(Multyproperty currentsMultyproperties in multyproperties)
+                nextYear = FindNextYear(inscription.InscriptionDate.Year, multyproperties);
+                pastYear = FindPastYear(inscription.InscriptionDate.Year, multyproperties);
+                if (pastYear != null)
                 {
-                    currentsMultyproperties.EndCurrencyYear = inscription.InscriptionDate.Year;
-                    db.Entry(currentsMultyproperties);
-                    db.SaveChanges();
+                    List<Multyproperty> multypropertiesToChange = multyproperties.Where(
+                        mp => mp.StartCurrencyYear == pastYear
+                        ).ToList();
+                    foreach (Multyproperty pastMP in multypropertiesToChange)
+                    {
+                        pastMP.EndCurrencyYear = inscription.InscriptionDate.Year;
+                        db.Entry(pastMP);
+                        db.SaveChanges();
+                    }
                 }
                 
             }
+           
+
             Multyproperty multyproperty = new Multyproperty();
             multyproperty.Comunne = inscription.Comunne;
             multyproperty.Block = inscription.Block;
@@ -212,10 +225,43 @@ namespace WebApplication1.Controllers
             multyproperty.InscriptionDate = inscription.InscriptionDate;
             multyproperty.InscriptionYear = inscription.InscriptionDate.Year;
             multyproperty.StartCurrencyYear = inscription.InscriptionDate.Year;
+            if (nextYear != null)
+            {
+                Multyproperty nextMP = multyproperties.Find(mp => mp.InscriptionYear == nextYear);
+                multyproperty.EndCurrencyYear = nextMP.StartCurrencyYear;
+            }
             multyproperty.Rut = rutPerson;
             multyproperty.Percentage = persentagePerson;
             db.Multyproperties.Add(multyproperty);
             db.SaveChanges();   
+        }
+        public static int? FindNextYear(int year, List<Multyproperty> multiproperties)
+        {
+            int? nextYear = multiproperties[0].InscriptionYear;
+            if (nextYear < year) return null;
+            foreach (Multyproperty mp in multiproperties)
+            {
+                if (mp.InscriptionYear > year && (mp.InscriptionYear - year) < (nextYear - year))
+                {
+                    nextYear = mp.InscriptionYear;
+                }
+            }
+            return nextYear;
+        }
+
+        public static int? FindPastYear(int year, List<Multyproperty> multiproperties)
+        {
+            int last = multiproperties.Count - 1;
+            int? pastYear = multiproperties[last].InscriptionYear;
+            if (pastYear > year) return null;
+            foreach (Multyproperty mp in multiproperties)
+            {
+                if (mp.InscriptionYear < year && (year - mp.InscriptionYear) < (year - pastYear))
+                {
+                    pastYear = mp.InscriptionYear;
+                }
+            }
+            return pastYear;
         }
     }
 }
