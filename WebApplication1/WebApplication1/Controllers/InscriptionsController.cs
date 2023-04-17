@@ -194,6 +194,7 @@ namespace WebApplication1.Controllers
 
             int? nextYear = null;
             int? pastYear = null;
+            bool ifCreateMultyproperty = true;
 
             if (multyproperties.Count > 0)
             {
@@ -211,7 +212,22 @@ namespace WebApplication1.Controllers
                         db.SaveChanges();
                     }
                 }
-                
+                List<Multyproperty> multypropertiesSameYear = multyproperties.Where(
+                    mp => mp.InscriptionYear == inscription.InscriptionDate.Year
+                    ).ToList();
+                if (multypropertiesSameYear.Count > 0)
+                {
+                    foreach(Multyproperty sameYearMP in multypropertiesSameYear)
+                    {
+                        if (sameYearMP.InscriptionDate > inscription.InscriptionDate)
+                        {
+                            ifCreateMultyproperty = false;
+                            break;
+                        }
+                        db.Multyproperties.Remove(sameYearMP);
+                        db.SaveChanges();
+                    }
+                }
             }
            
 
