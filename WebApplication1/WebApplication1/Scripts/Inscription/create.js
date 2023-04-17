@@ -23,6 +23,18 @@ errorDiv.className = "alert alert-info";
 errorDiv.innerHTML = "No se cumplen los requisitos";
 errorDiv.style.display = "none";
 NewAcquirer.insertAdjacentElement('afterend', errorDiv);
+const cneSelect = document.querySelector("#cne_select");
+const allAlienatorsDiv = document.querySelector("#all_alienators");
+
+
+cneSelect.addEventListener("change", () => {
+    if (cneSelect.value === "Regularización de Patrimonio") {
+        allAlienatorsDiv.style.display = "none";
+    } else {
+        allAlienatorsDiv.style.display = "block";
+    }
+});
+
 
 
 NotPercentAlienator.addEventListener('change', () => {
