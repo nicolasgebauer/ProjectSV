@@ -9,11 +9,13 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-
+@{
+    var comunas = new List<string> { "Estación Central", "Huechuraba", "Las Condes", "La Dehesa", "La Florida", "La Reina", "Lo Barnechea", "Lo Espejo", "Ñuñoa", "Quilicura", "Santiago", "Vitacura" };
+}
 @using (Html.BeginForm("Index", "Multyproperties", FormMethod.Post, new { route = "Multyproperties/index", id = "filterForm" }))
 {
     <p>
-        Commune: @Html.TextBox("commune")
+        Commune: @Html.DropDownList("commune",new SelectList(comunas), "-- Seleccione una comuna --")
         Block: @Html.TextBox("block")
         Site: @Html.TextBox("site")
         Year: @Html.TextBox("year")
@@ -107,11 +109,12 @@
     }
 
 </table>
-<script>function clearForm() {
+<script>
+    function clearForm() {
         document.getElementById("commune").value = "";
         document.getElementById("block").value = "";
         document.getElementById("site").value = "";
         document.getElementById("year").value = "";
         var form = document.getElementById("filterForm");
         form.submit();
-    }</script>
+    }</script>

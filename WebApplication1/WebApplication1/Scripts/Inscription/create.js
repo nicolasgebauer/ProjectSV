@@ -25,13 +25,13 @@ NewAcquirer.insertAdjacentElement('afterend', errorDiv);
 const cneSelect = document.querySelector("#cne_select");
 const allAlienatorsDiv = document.querySelector("#all_alienators");
 const rutRegex = /^[0-9]+$/;
-const comunaValue = document.getElementById("Comunne").value;
-const blockValue = document.getElementById("Block").value;
-const siteValue = document.getElementById("Site").value;
-const pageValue = document.getElementById("Page").value;
-const inscriptionNumberValue = document.getElementById("InscriptionNumber").value;
+const comunaValue = document.getElementById("commune_select").value;
+const blockValue = document.getElementById("blok_input").value;
+const siteValue = document.getElementById("site_input").value;
+const pageValue = document.getElementById("page_input").value;
+const inscriptionNumberValue = document.getElementById("inscription_number_input").value;
 
-cneSelect.addEventListener("change", () => {
+cneSelect.addEventListener("change", () => {      // if the CNE is Regularización de Patrimonio, the Enanejantes form dissapears
     if (cneSelect.value === "Regularización de Patrimonio") {
         allAlienatorsDiv.style.display = "none";
     } else {
@@ -41,7 +41,7 @@ cneSelect.addEventListener("change", () => {
 
 
 
-NotPercentAlienator.addEventListener('change', () => {
+NotPercentAlienator.addEventListener('change', () => {   //button of percentage's visibility
     if (NotPercentAlienator.checked) {
         PercentAlienator.disabled = true;
     } else {
@@ -58,7 +58,7 @@ NewAlienator.addEventListener('click', () => {
     const PercentCellAlienator = NewRowAlienator.insertCell()
     var rut = AlienatorRUT.value
     var percent = PercentAlienator.value
-    if (NotPercentAlienator.checked) {              //Cases where 
+    if (NotPercentAlienator.checked) {              //Alienators with no defined percentage are added with -1 to distinguish them
         AllUsers.alienators_users.push([rut, -1])
         RutCellAlienator.innerHTML = rut;
         PercentCellAlienator.innerHTML = "";
@@ -90,8 +90,8 @@ AcquirerRUT.addEventListener('input', (event) => { //Verifies if the RUT is not 
 PercentAcquirer.addEventListener('input', (event) => {
     let sum = 0;
     const percent = parseInt(event.target.value);
-
-    if (isNaN(percent) || percent < 0 || percent > 100) { //checks if the sum of percentages is greater than 100
+    //checks if the sum of percentages is greater than 100
+    if (isNaN(percent) || percent < 0 || percent > 100) {
         disableButton();
         showError();
         return;
@@ -129,13 +129,9 @@ function showError() {
 
 }
 
-
-
 function hideError() {
     errorDiv.style.display = "none";
 }
-
-
 
 function findRUT(element, rut) {
     return element[0] === rut;
@@ -174,14 +170,9 @@ NotPercentAcquirer.addEventListener('change', () => {
 });
 
 
-SubmitButtonInscription.addEventListener('click', () => {
+SubmitButtonInscription.addEventListener('click', (event) => {
     let sum = 0
     let countNotPercent = 0;
-    if (comunaValue === "" || blockValue === "" || siteValue === "" || pageValue === "" || inscriptionNumberValue === "") {
-        // Prevent the form from being submitted
-        event.preventDefault();
-        alert("Por favor, complete todos los campos antes de enviar el formulario.");
-    }
     for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
         const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
         if (percentage !== -1) {
@@ -192,6 +183,7 @@ SubmitButtonInscription.addEventListener('click', () => {
         }
     }
     if (sum < 100) {
+        //Divide the remaining percentage among the acquirers without a percentage
         const remainingPercent = 100 - sum;
         if (countNotPercent > 0) {
             const percentPerAcquirer = (remainingPercent / countNotPercent).toFixed(2);

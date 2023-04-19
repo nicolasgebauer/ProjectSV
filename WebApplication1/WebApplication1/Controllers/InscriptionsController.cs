@@ -214,6 +214,15 @@ namespace WebApplication1.Controllers
                         {
                             ifCreateMultyproperty = false;
                             break;
+                        }else if (sameYearMP.InscriptionDate == inscription.InscriptionDate)
+                        {
+                            double sameYeraMP_IN = Double.Parse(sameYearMP.InscriptionNumber);
+                            double inscription_IN = Double.Parse(inscription.InscriptionNumber);
+                            if (sameYeraMP_IN > inscription_IN)
+                            {
+                                ifCreateMultyproperty = false;
+                                break;
+                            }
                         }
                         db.Multyproperties.Remove(sameYearMP);
                         db.SaveChanges();
