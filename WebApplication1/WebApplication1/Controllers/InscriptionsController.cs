@@ -150,6 +150,7 @@ namespace WebApplication1.Controllers
             }
             base.Dispose(disposing);
         }
+        // Función para crear tanto como la instancia Person y Alientaror o Acquirer
     public void CreatePeople(string typePeople, string rutPerson, double persentagePerson, Inscription inscription)
         {
             Person person;
@@ -183,6 +184,7 @@ namespace WebApplication1.Controllers
                 crateMultyproperty(rutPerson, persentagePerson, inscription);
             }
         }
+        //Función para crear de manera automatica un Multiproperty
         public void crateMultyproperty(string rutPerson, double persentagePerson, Inscription inscription)
         {
             List<Multyproperty> multyproperties = db.Multyproperties.Where(
@@ -279,6 +281,8 @@ namespace WebApplication1.Controllers
                 db.SaveChanges();   
             }
         }
+        //Función para encontrar el siguente año presente en los multipropietarios según
+        // una año y rol
         public static int? FindNextYear(int year, List<Multyproperty> multiproperties)
         {
             int? nextYear = multiproperties[0].StartCurrencyYear;
@@ -292,7 +296,8 @@ namespace WebApplication1.Controllers
             }
             return nextYear;
         }
-
+        //Función para encontrar el anterior año presente en los multipropietarios según
+        // una año y rol
         public static int? FindPastYear(int year, List<Multyproperty> multiproperties)
         {
             int last = multiproperties.Count - 1;
