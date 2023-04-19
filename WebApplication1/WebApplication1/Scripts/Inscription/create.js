@@ -34,8 +34,12 @@ const inscriptionNumberValue = document.getElementById("inscription_number_input
 cneSelect.addEventListener("change", () => {      // if the CNE is Regularización de Patrimonio, the Enanejantes form dissapears
     if (cneSelect.value === "Regularización de Patrimonio") {
         allAlienatorsDiv.style.display = "none";
+        AlienatorRUT.disabled = true;
+        PercentAlienator.disabled = true;
     } else {
         allAlienatorsDiv.style.display = "block";
+        PercentAlienator.disabled = false
+        AlienatorRUT.disabled = false;
     }
 });
 
