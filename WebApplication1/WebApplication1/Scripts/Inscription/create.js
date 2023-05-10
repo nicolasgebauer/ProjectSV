@@ -194,7 +194,7 @@ SubmitButtonInscription.addEventListener('click', (event) => {
             for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
                 const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
                 if (percentage === -1) {
-                    AllUsers.acquirers_users[i][1] = percentPerAcquirer;
+                    AllUsers.acquirers_users[i][1] = 0;
                 }
             }
 
