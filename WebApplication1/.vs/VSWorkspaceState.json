@@ -2,9 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\WebApplication1",
+    "\\WebApplication1\\Controllers",
     "\\WebApplication1\\Scripts",
     "\\WebApplication1\\Scripts\\Inscription"
   ],
-  "SelectedNode": "\\WebApplication1\\Scripts\\Inscription\\create.js",
+  "SelectedNode": "\\WebApplication1\\Controllers\\InscriptionsController.cs",
   "PreviewInSolutionExplorer": false
 }

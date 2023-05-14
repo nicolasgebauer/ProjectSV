@@ -56,14 +56,22 @@ namespace WebApplication1.Controllers
                 db.Inscriptions.Add(inscription);
                 db.SaveChanges();
                 var AllUsers = JObject.Parse(users_info);
+
+                var AcquirersUsers = AllUsers["acquirers_users"];
+                double sumPercentageAcquirers = AcquirersUsers.Sum(aquirer => Convert.ToDouble(aquirer[1]));
+                int countAcquirers = AcquirersUsers.Count(aquirer => Convert.ToDouble(aquirer[1]) == 0);
+                double percentageForAcquirer = (100 - sumPercentageAcquirers) / countAcquirers;
+
+                var AlienatorsUsers = AllUsers["alienators_users"];
+                double sumPercentageAlienators = AlienatorsUsers.Sum(alienator => Convert.ToDouble(alienator[1]));
+                int countAlienators = AlienatorsUsers.Count(alienator => Convert.ToDouble(alienator[1]) == 0);
+                double percentageForAlienator = (100 - sumPercentageAlienators) / countAlienators;
+                Console.WriteLine(AlienatorsUsers.ToString());
+                Console.WriteLine(AlienatorsUsers);
                 if (inscription.CNE == "Regularización de Patrimonio")
                 {
                     if (AllUsers.ContainsKey("acquirers_users"))
                     {
-                        var AcquirersUsers = AllUsers["acquirers_users"];
-                        double sumPercentageAcquirers = AcquirersUsers.Sum(aquirer => Convert.ToDouble(aquirer[1]));
-                        int countAcquirers = AcquirersUsers.Count(aquirer => Convert.ToDouble(aquirer[1])==0);
-                        double percentageForAcquirer = (100 - sumPercentageAcquirers) / countAcquirers;
                         foreach (var acquirer_info in AcquirersUsers)
                         {
                             string rutPerson = acquirer_info[0].ToString();
@@ -76,24 +84,23 @@ namespace WebApplication1.Controllers
                 {
                     if (AllUsers.ContainsKey("alienators_users"))
                     {
-                        var AlienatorsUsers = AllUsers["alienators_users"];
-
                         foreach (var alienator_info in AlienatorsUsers)
                         {
                             string rutPerson = alienator_info[0].ToString();
                             double percentagePerson = Convert.ToDouble(alienator_info[1]);
-                            CreatePeople("alienators", rutPerson, percentagePerson, inscription);
+                            if (percentagePerson != 0) CreatePeople("alienators", rutPerson, percentagePerson, inscription);
+                            else CreatePeople("alienators", rutPerson, percentageForAcquirer, inscription);
                         }
                     }
                     if (AllUsers.ContainsKey("acquirers_users"))
                     {
-                        var AcquirersUsers = AllUsers["acquirers_users"];
 
                         foreach (var acquirer_info in AcquirersUsers)
                         {
                             string rutPerson = acquirer_info[0].ToString();
                             double percentagePerson = Convert.ToDouble(acquirer_info[1]);
-                            CreatePeople("acquirers", rutPerson, percentagePerson, inscription);
+                            if (percentagePerson != 0) CreatePeople("acquirers", rutPerson, percentagePerson, inscription);
+                            else CreatePeople("acquirers", rutPerson, percentageForAcquirer, inscription);
 
                         }
                     }

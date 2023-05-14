@@ -175,29 +175,16 @@ NotPercentAcquirer.addEventListener('change', () => {
 
 
 SubmitButtonInscription.addEventListener('click', (event) => {
-    let sum = 0
-    let countNotPercent = 0;
     for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
         const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
-        if (percentage !== -1) {
-            sum += percentage;
-
-        } else {
-            countNotPercent++;
+        if (percentage == -1) {
+            AllUsers.acquirers_users[i][1] = 0;
         }
     }
-    if (sum < 100) {
-        //Divide the remaining percentage among the acquirers without a percentage
-        const remainingPercent = 100 - sum;
-        if (countNotPercent > 0) {
-            const percentPerAcquirer = (remainingPercent / countNotPercent).toFixed(2);
-            for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
-                const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
-                if (percentage === -1) {
-                    AllUsers.acquirers_users[i][1] = 0;
-                }
-            }
-
+    for (let i = 0; i < AllUsers.alienators_users.length; i++) {
+        const percentage = parseFloat(AllUsers.alienators_users[i][1]);
+        if (percentage == -1) {
+            AllUsers.alienators_users[i][1] = 0;
         }
     }
 
