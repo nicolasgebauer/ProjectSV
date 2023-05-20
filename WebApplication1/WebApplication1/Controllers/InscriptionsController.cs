@@ -200,6 +200,32 @@ namespace WebApplication1.Controllers
 
         }
 
+        public void BuyingAndSellingPercentageEqualTo100(List<Tuple<string, double>> acquirers, List<Tuple<string, double>> alienators, Inscription inscription)
+        {
+            int year = inscription.InscriptionDate.Year;
+            double? sumPercentagetoTransfer = 0;
+            foreach(var alienatorInfo in alienators)
+            {
+                string rutAlienator = alienatorInfo.Item1;
+                double percentageAlienator = alienatorInfo.Item2;
+                Person alienatorPerson = CreateOrSetPerson(rutAlienator);
+                Alienator alienatorInstance = CreateAlienator(alienatorPerson,percentageAlienator,inscription);
+                Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, rutAlienator, year)[0];
+                sumPercentagetoTransfer += multypropertyAlienator.Percentage;
+                db.Multyproperties.Remove(multypropertyAlienator);
+                db.SaveChanges();
+            }
+            foreach(var acquirerInfo in acquirers)
+            {
+                string rutAcquirer = acquirerInfo.Item1;
+                double percentageAcquirer = acquirerInfo.Item2;
+                Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
+                double percentageToRecive = (double)(sumPercentagetoTransfer * percentageAcquirer) / 100;
+                Acquirer acquirerInstance = CreateAcquirer(acquirerPerson,percentageToRecive,inscription);
+                CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
+            }
+        }
+
         private List<Tuple<List<Tuple<string, double>>, double, double>> GetUsersJsonToLists(string people_info)
         {
             List<Tuple<List<Tuple<string, double>>, double, double>> allPeople = new List<Tuple<List<Tuple<string, double>>, double, double>>();
@@ -458,7 +484,7 @@ namespace WebApplication1.Controllers
 
             if (sumPercentageAcquirers == 100)
             {
-
+                BuyingAndSellingPercentageEqualTo100(acquirers, alienators,inscription);
             }
             else if (acquirers.Count == 1 && alienators.Count == 1)
             {
