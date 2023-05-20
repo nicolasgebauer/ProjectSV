@@ -226,6 +226,25 @@ namespace WebApplication1.Controllers
             }
         }
 
+        public void BuyingAndSellingThirdCase(List<Tuple<string, double>> acquirers, List<Tuple<string, double>> alienators, Inscription inscription)
+        {
+            int year = inscription.InscriptionDate.Year;
+            double? sumPercentagetoTransfer = 0;
+            foreach(var alienatorInfo in alienators)
+            {
+                string rutAlienator = alienatorInfo.Item1;
+                double percentageAlienator = alienatorInfo.Item2;
+                Person alienatorPerson = CreateOrSetPerson(rutAlienator);
+                Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
+                Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, rutAlienator, year)[0];
+                multypropertyAlienator.Percentage -= percentageAlienator;
+                db.Entry(multypropertyAlienator);
+                db.SaveChanges();
+
+            }
+
+        }
+
         private List<Tuple<List<Tuple<string, double>>, double, double>> GetUsersJsonToLists(string people_info)
         {
             List<Tuple<List<Tuple<string, double>>, double, double>> allPeople = new List<Tuple<List<Tuple<string, double>>, double, double>>();
