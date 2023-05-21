@@ -185,9 +185,9 @@ namespace WebApplication1.Controllers
             Person alienatorPerson = CreateOrSetPerson(rutAlienator);
             Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
             int year = inscription.InscriptionDate.Year;
-            List<Multyproperty> multypropertiesAlienator = SearchMulypropertiesinDataBase(inscription, rutAlienator,year);
+            List<Multyproperty> multypropertiesAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator);
 
-            List<Multyproperty> multypropertiesAquirer = SearchMulypropertiesinDataBase(inscription, rutAcquirer, year);
+            List<Multyproperty> multypropertiesAquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
 
             Multyproperty multyAlienator = multypropertiesAlienator[0];
             double persentToTransfer = (double)(multyAlienator.Percentage * percentageAlienator) / 100;
@@ -210,7 +210,7 @@ namespace WebApplication1.Controllers
                 double percentageAlienator = alienatorInfo.Item2;
                 Person alienatorPerson = CreateOrSetPerson(rutAlienator);
                 Alienator alienatorInstance = CreateAlienator(alienatorPerson,percentageAlienator,inscription);
-                Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, rutAlienator, year)[0];
+                Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator)[0];
                 sumPercentagetoTransfer += multypropertyAlienator.Percentage;
                 db.Multyproperties.Remove(multypropertyAlienator);
                 db.SaveChanges();
@@ -229,18 +229,47 @@ namespace WebApplication1.Controllers
         public void BuyingAndSellingThirdCase(List<Tuple<string, double>> acquirers, List<Tuple<string, double>> alienators, Inscription inscription)
         {
             int year = inscription.InscriptionDate.Year;
-            double? sumPercentagetoTransfer = 0;
+
             foreach(var alienatorInfo in alienators)
             {
                 string rutAlienator = alienatorInfo.Item1;
                 double percentageAlienator = alienatorInfo.Item2;
                 Person alienatorPerson = CreateOrSetPerson(rutAlienator);
                 Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
-                Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, rutAlienator, year)[0];
+                Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator)[0];
                 multypropertyAlienator.Percentage -= percentageAlienator;
+                if(multypropertyAlienator.Percentage < 0) multypropertyAlienator.Percentage = 0;
                 db.Entry(multypropertyAlienator);
                 db.SaveChanges();
+            }
+            foreach(var acquirersInfo in acquirers)
+            {
+                string rutAcquirer = acquirersInfo.Item1;
+                double percentageAcquirer = acquirersInfo.Item2;
+                Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
+                Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, percentageAcquirer, inscription);
+                List<Multyproperty> multypropertiesAcquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
+                if (multypropertiesAcquirer.Count > 0)
+                {
+                    Multyproperty multypropertyAcquirer = multypropertiesAcquirer[0];
+                    multypropertyAcquirer.Percentage += percentageAcquirer;
+                    db.Entry(multypropertyAcquirer);
+                    db.SaveChanges();
+                }
+                else CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
+            }
 
+            List<Multyproperty> newStateMultiproperties = SearchMulypropertiesinDataBase(inscription,year);
+            double? sumActualPercentage = newStateMultiproperties.Sum(x => x.Percentage);
+            if (sumActualPercentage > 100)
+            {
+                foreach (Multyproperty multyproperty in newStateMultiproperties)
+                {
+                    double? newPercentage = (double)(multyproperty.Percentage*100)/sumActualPercentage;
+                    multyproperty.Percentage = newPercentage;
+                    db.Entry(multyproperty); 
+                    db.SaveChanges();
+                }
             }
 
         }
@@ -465,16 +494,25 @@ namespace WebApplication1.Controllers
             }
         }
 
-        private List<Multyproperty> SearchMulypropertiesinDataBase(Inscription inscription, string rut = null, int? year  = null)
+        private List<Multyproperty> SearchMulypropertiesinDataBase(Inscription inscription, int? year  = null, string rut = null)
         {
-            List<Multyproperty> multyproperties;
+            List<Multyproperty> multyproperties = new List<Multyproperty> ();
             if (rut == null && year == null)
             {
                 multyproperties = db.Multyproperties.Where(
-               mp => mp.Comunne == inscription.Comunne
-               && mp.Block == inscription.Block
-               && mp.Site == inscription.Site
-               && mp.AtentionNumber != inscription.AtentionNumber
+                mp => mp.Comunne == inscription.Comunne
+                && mp.Block == inscription.Block
+                && mp.Site == inscription.Site
+                && mp.AtentionNumber != inscription.AtentionNumber
+                ).OrderByDescending(mp => mp.InscriptionDate).ToList();
+            }
+            else if(rut == null)
+            {
+                multyproperties = db.Multyproperties.Where(
+                mp => mp.Comunne == inscription.Comunne
+                && mp.Block == inscription.Block
+                && mp.Site == inscription.Site
+                && mp.InscriptionYear == year
                 ).OrderByDescending(mp => mp.InscriptionDate).ToList();
             }
             else
@@ -519,7 +557,14 @@ namespace WebApplication1.Controllers
             }
             else
             {
+                Tuple<string, double> acquirer = acquirers[0];
+                string rutAcquirer = acquirer.Item1;
+                double percentageAcquirer = acquirer.Item2;
 
+                Tuple<string, double> alienator = alienators[0];
+                string rutAlienator = alienator.Item1;
+                double percentageAlienator = alienator.Item2; 
+                BuyingAndSellingThirdCase(acquirers, alienators, inscription);
             }
         }
     }
