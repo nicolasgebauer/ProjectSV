@@ -3,9 +3,10 @@
     "",
     "\\WebApplication1",
     "\\WebApplication1\\Controllers",
-    "\\WebApplication1\\Scripts",
-    "\\WebApplication1\\Scripts\\Inscription"
+    "\\WebApplication1\\Scripts\\Inscription",
+    "\\WebApplication1\\Views",
+    "\\WebApplication1\\Views\\Multyproperties"
   ],
-  "SelectedNode": "\\WebApplication1\\Controllers\\InscriptionsController.cs",
+  "SelectedNode": "\\WebApplication1\\Views\\Multyproperties\\Index.cshtml",
   "PreviewInSolutionExplorer": false
 }
