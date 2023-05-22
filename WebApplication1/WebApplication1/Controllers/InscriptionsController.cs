@@ -74,7 +74,7 @@ namespace WebApplication1.Controllers
                     EquityRegulation(allAcquirersInfo, inscription);
                 } else if (inscription.CNE == "Compraventa")
                 {
-                    BuyingAndSelling(allAcquirersInfo,allAlienatorsInfo,inscription);
+                    BuyingAndSelling(allAcquirersInfo, allAlienatorsInfo, inscription);
                 }
                 return RedirectToAction("Index");
             }
@@ -181,22 +181,33 @@ namespace WebApplication1.Controllers
 
         public void BuyingAndSelling1To1Case(string rutAlienator, string rutAcquirer, double percentageAlienator, double percentageAcquirer, Inscription inscription)
         {
-            
+
             Person alienatorPerson = CreateOrSetPerson(rutAlienator);
             Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
             int year = inscription.InscriptionDate.Year;
             List<Multyproperty> multypropertiesAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator);
 
-            List<Multyproperty> multypropertiesAquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
-
             Multyproperty multyAlienator = multypropertiesAlienator[0];
-            double persentToTransfer = (double)(multyAlienator.Percentage * percentageAlienator) / 100;
-            multyAlienator.Percentage = multyAlienator.Percentage - persentToTransfer;
-            Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
-            Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, persentToTransfer, inscription);
+            double percentageTransfer = (double)(multyAlienator.Percentage * percentageAlienator) / 100;
+            double? percentageAlienatorBeforeChange = multyAlienator.Percentage;
+            multyAlienator.Percentage = multyAlienator.Percentage - percentageTransfer;
             db.Entry(multyAlienator);
             db.SaveChanges();
-            CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
+
+            double percentageRecived = (double)(percentageAlienatorBeforeChange * percentageAcquirer) / 100;
+            Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
+            Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, percentageRecived, inscription);
+           
+            List<Multyproperty> multypropertiesAcquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
+            if (multypropertiesAcquirer.Count > 0)
+            {
+                Multyproperty multypropertyAcquirer = multypropertiesAcquirer[0];
+                multypropertyAcquirer.Percentage += percentageRecived;
+                db.Entry(multypropertyAcquirer);
+                db.SaveChanges();
+            }
+            else CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
+            StandardizeMultyproperties(year, inscription);
 
         }
 
@@ -204,25 +215,39 @@ namespace WebApplication1.Controllers
         {
             int year = inscription.InscriptionDate.Year;
             double? sumPercentagetoTransfer = 0;
-            foreach(var alienatorInfo in alienators)
+            foreach (var alienatorInfo in alienators)
             {
                 string rutAlienator = alienatorInfo.Item1;
                 double percentageAlienator = alienatorInfo.Item2;
                 Person alienatorPerson = CreateOrSetPerson(rutAlienator);
-                Alienator alienatorInstance = CreateAlienator(alienatorPerson,percentageAlienator,inscription);
+                Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
                 Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator)[0];
                 sumPercentagetoTransfer += multypropertyAlienator.Percentage;
-                db.Multyproperties.Remove(multypropertyAlienator);
+                if (multypropertyAlienator.StartCurrencyYear == year) db.Multyproperties.Remove(multypropertyAlienator);
+                else
+                {
+                    multypropertyAlienator.EndCurrencyYear = year-1;
+                    db.Entry(multypropertyAlienator);
+                }
                 db.SaveChanges();
             }
-            foreach(var acquirerInfo in acquirers)
+            foreach (var acquirerInfo in acquirers)
             {
                 string rutAcquirer = acquirerInfo.Item1;
                 double percentageAcquirer = acquirerInfo.Item2;
                 Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
                 double percentageToRecive = (double)(sumPercentagetoTransfer * percentageAcquirer) / 100;
-                Acquirer acquirerInstance = CreateAcquirer(acquirerPerson,percentageToRecive,inscription);
-                CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
+                Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, percentageToRecive, inscription);
+                List<Multyproperty> multypropertiesAcquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
+                if (multypropertiesAcquirer.Count > 0)
+                {
+                    Multyproperty multypropertyAcquirer = multypropertiesAcquirer[0];
+                    multypropertyAcquirer.Percentage += percentageToRecive;
+                    db.Entry(multypropertyAcquirer);
+                    db.SaveChanges();
+                }
+                else CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
+                StandardizeMultyproperties(year, inscription);
             }
         }
 
@@ -230,7 +255,7 @@ namespace WebApplication1.Controllers
         {
             int year = inscription.InscriptionDate.Year;
 
-            foreach(var alienatorInfo in alienators)
+            foreach (var alienatorInfo in alienators)
             {
                 string rutAlienator = alienatorInfo.Item1;
                 double percentageAlienator = alienatorInfo.Item2;
@@ -238,7 +263,12 @@ namespace WebApplication1.Controllers
                 Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
                 Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator)[0];
                 multypropertyAlienator.Percentage -= percentageAlienator;
-                if(multypropertyAlienator.Percentage < 0) multypropertyAlienator.Percentage = 0;
+                if (multypropertyAlienator.Percentage < 0)
+                {
+                    multypropertyAlienator.Percentage = 0;
+                    db.Multyproperties.Remove(multypropertyAlienator);
+                    db.SaveChanges();
+                } 
                 db.Entry(multypropertyAlienator);
                 db.SaveChanges();
             }
@@ -259,18 +289,7 @@ namespace WebApplication1.Controllers
                 else CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
             }
 
-            List<Multyproperty> newStateMultiproperties = SearchMulypropertiesinDataBase(inscription,year);
-            double? sumActualPercentage = newStateMultiproperties.Sum(x => x.Percentage);
-            if (sumActualPercentage > 100)
-            {
-                foreach (Multyproperty multyproperty in newStateMultiproperties)
-                {
-                    double? newPercentage = (double)(multyproperty.Percentage*100)/sumActualPercentage;
-                    multyproperty.Percentage = newPercentage;
-                    db.Entry(multyproperty); 
-                    db.SaveChanges();
-                }
-            }
+            StandardizeMultyproperties(year, inscription);
 
         }
 
@@ -459,6 +478,7 @@ namespace WebApplication1.Controllers
             if (ifCreateMultyproperty == true)
             {
                 CreateMultyproperty(acquirer.Rut, acquirer.Percentage, yearOfStart, endYear, inscription);
+                StandardizeMultyproperties(yearOfStart, inscription);
             }
         }
 
@@ -523,7 +543,7 @@ namespace WebApplication1.Controllers
                 && mp.Site == inscription.Site
                 && mp.AtentionNumber != inscription.AtentionNumber
                 && mp.Rut == rut
-                && mp.InscriptionYear == year
+                && mp.InscriptionYear <= year
                 ).OrderByDescending(mp => mp.InscriptionDate).ToList();
             }
             return multyproperties;
@@ -566,6 +586,30 @@ namespace WebApplication1.Controllers
                 double percentageAlienator = alienator.Item2; 
                 BuyingAndSellingThirdCase(acquirers, alienators, inscription);
             }
+        }
+
+        private void StandardizeMultyproperties(int year,Inscription inscription)
+        {
+            List<Multyproperty> newStateMultiproperties = SearchMulypropertiesinDataBase(inscription, year);
+            double? sumActualPercentage = newStateMultiproperties.Sum(x => x.Percentage);
+            if (sumActualPercentage > 100)
+            {
+                foreach (Multyproperty multyproperty in newStateMultiproperties)
+                {
+                    double? newPercentage = (double)(multyproperty.Percentage * 100) / sumActualPercentage;
+                    multyproperty.Percentage = Math.Round((double)newPercentage,2);
+                    db.Entry(multyproperty);
+                }
+            }
+            else
+            {
+                foreach (Multyproperty multyproperty in newStateMultiproperties)
+                {
+                    multyproperty.Percentage = Math.Round((double)multyproperty.Percentage, 2);
+                    db.Entry(multyproperty);
+                }
+            }
+            db.SaveChanges();
         }
     }
 
