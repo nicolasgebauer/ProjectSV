@@ -9,6 +9,7 @@ namespace WebApplication1.Controllers
     {
         public const int MaxPercentage = 100;
         public const string RegularizacionPatrimonioKey = "Regularización de Patrimonio";
+        public const string CompraventaKey = "Compraventa";
         public const string AcquirersUsersKey = "acquirers_users";
         public const string AlienatorsUsersKey = "alienators_users";
         public const int OldestYearKey = 2019;

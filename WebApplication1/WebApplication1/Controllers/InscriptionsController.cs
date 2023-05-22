@@ -72,7 +72,7 @@ namespace WebApplication1.Controllers
                 if (inscription.CNE == Globals.RegularizacionPatrimonioKey)
                 {
                     EquityRegulation(allAcquirersInfo, inscription);
-                } else if (inscription.CNE == "Compraventa")
+                } else if (inscription.CNE == Globals.CompraventaKey)
                 {
                     BuyingAndSelling(allAcquirersInfo, allAlienatorsInfo, inscription);
                 }
@@ -350,6 +350,8 @@ namespace WebApplication1.Controllers
             return allPeople;
         }
 
+        // EquityRegulation == Regularizacion de Patrimonio
+        // This function contais all de algorithm of Equity Reluration
         private void EquityRegulation(Tuple<List<Tuple<string, double>>, double, double> acquirersInfo, Inscription inscription)
         {
             List<Tuple<string, double>> acquirers = acquirersInfo.Item1;
@@ -490,8 +492,8 @@ namespace WebApplication1.Controllers
             if (ifCreateMultyproperty == true)
             {
                 CreateMultyproperty(acquirer.Rut, acquirer.Percentage, yearOfStart, endYear, inscription);
-                StandardizeMultyproperties(yearOfStart, inscription);
             }
+            StandardizeMultyproperties(yearOfStart, inscription);
         }
 
         private void CreateMultypropertyForBuyingAndSelling(Acquirer acquirer,Inscription inscription)
@@ -544,7 +546,7 @@ namespace WebApplication1.Controllers
                 mp => mp.Comunne == inscription.Comunne
                 && mp.Block == inscription.Block
                 && mp.Site == inscription.Site
-                && mp.InscriptionYear == year
+                && mp.StartCurrencyYear == year
                 ).OrderByDescending(mp => mp.InscriptionDate).ToList();
             }
             else
@@ -555,7 +557,7 @@ namespace WebApplication1.Controllers
                 && mp.Site == inscription.Site
                 && mp.AtentionNumber != inscription.AtentionNumber
                 && mp.Rut == rut
-                && mp.InscriptionYear <= year
+                && mp.StartCurrencyYear <= year
                 ).OrderByDescending(mp => mp.InscriptionDate).ToList();
             }
             return multyproperties;
@@ -617,7 +619,8 @@ namespace WebApplication1.Controllers
             {
                 foreach (Multyproperty multyproperty in newStateMultiproperties)
                 {
-                    multyproperty.Percentage = Math.Round((double)multyproperty.Percentage, 2);
+                    double percentage = (double)multyproperty.Percentage;
+                    multyproperty.Percentage = Math.Round(percentage, 2);
                     db.Entry(multyproperty);
                 }
             }
