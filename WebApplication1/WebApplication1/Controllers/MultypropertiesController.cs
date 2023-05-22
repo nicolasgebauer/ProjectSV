@@ -113,13 +113,13 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Multyproperties/Delete/5
-        public ActionResult Delete(string comunne, string block, string site, string rut, int atentionnumber)
+        public ActionResult Delete(string comunne, string block, string site, string rut, int atentionNumber)
         {
             if (rut == null && comunne == null && block == null && site == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Multyproperty multyproperty = db.Multyproperties.Find(comunne, block, site, rut,atentionnumber);
+            Multyproperty multyproperty = db.Multyproperties.Find(comunne, block, site, rut,atentionNumber);
             if (multyproperty == null)
             {
                 return HttpNotFound();
@@ -130,9 +130,9 @@ namespace WebApplication2.Controllers
         // POST: Multyproperties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string comunne, string block, string site, string rut, int atentionnumber)
+        public ActionResult DeleteConfirmed(string comunne, string block, string site, string rut, int atentionNumber)
         {
-            Multyproperty multyproperty = db.Multyproperties.Find(comunne, block, site, rut, atentionnumber);
+            Multyproperty multyproperty = db.Multyproperties.Find(comunne, block, site, rut, atentionNumber);
             db.Multyproperties.Remove(multyproperty);
             db.SaveChanges();
             return RedirectToAction("Index");

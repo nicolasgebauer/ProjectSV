@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<WebApplication1.Models.Multyproperty>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Multipropietarios";
 }
 
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Crear", "Create")
 </p>
 @{
     var comunas = new List<string> { "Estación Central", "Huechuraba", "Las Condes", "La Dehesa", "La Florida", "La Reina", "Lo Barnechea", "Lo Espejo", "Ñuñoa", "Quilicura", "Santiago", "Vitacura" };
@@ -15,12 +15,12 @@
 @using (Html.BeginForm("Index", "Multyproperties", FormMethod.Post, new { route = "Multyproperties/index", id = "filterForm" }))
 {
     <p>
-        Commune: @Html.DropDownList("commune",new SelectList(comunas), "-- Seleccione una comuna --")
-        Block: @Html.TextBox("block")
-        Site: @Html.TextBox("site")
-        Year: @Html.TextBox("year")
-        <button type="submit" class="btn btn-primary">Filter</button>
-        <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear</button>
+        Comuna: @Html.DropDownList("commune",new SelectList(comunas), "-- Seleccione una comuna --")
+        Manzana: @Html.TextBox("block")
+        Predio: @Html.TextBox("site")
+        Año: @Html.TextBox("year")
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <button type="button" class="btn btn-secondary" onclick="clearForm()">Limpiar</button>
     </p>
 }
 <table class="table">
@@ -101,9 +101,9 @@
                 @Html.DisplayFor(modelItem => item.EndCurrencyYear)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Editar", "Edit", new { /* id=item.PrimaryKey */ }) |
 
-                @Html.ActionLink("Delete", "Delete", new { comunne = item.Comunne, block = item.Block, site = item.Site, rut = item.Rut, atentionnumber = item.AtentionNumber })
+                @Html.ActionLink("Eliminar", "Delete", new { comunne = item.Comunne, block = item.Block, site = item.Site, rut = item.Rut, atentionNumber = item.AtentionNumber })
             </td>
         </tr>
     }

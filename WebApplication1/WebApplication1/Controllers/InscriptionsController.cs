@@ -50,26 +50,26 @@ namespace WebApplication1.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "AtentionNumber,CNE,Comunne,Block,Site,Page,InscriptionNumber,InscriptionDate")] Inscription inscription, string users_info)
+        public ActionResult Create([Bind(Include = "AtentionNumber,CNE,Comunne,Block,Site,Page,InscriptionNumber,InscriptionDate")] Inscription inscription, string usersInfo)
         {
             if (ModelState.IsValid)
             {
                 db.Inscriptions.Add(inscription);
                 db.SaveChanges();
 
-                List<Tuple<List<Tuple<string, double>>, double, double>> allUsers = GetUsersJsonToLists(users_info);
-                Tuple<List<Tuple<string, double>>, double, double> allAlienatorsInfo = allUsers[0];
-                Tuple<List<Tuple<string, double>>, double, double> allAcquirersInfo = allUsers[1];
+                List<Tuple<List<Tuple<string, double>>, double, double>> allUsersInfo = GetUsersJsonToLists(usersInfo);
+                Tuple<List<Tuple<string, double>>, double, double> allAlienatorsInfo = allUsersInfo[0];
+                Tuple<List<Tuple<string, double>>, double, double> allAcquirersInfo = allUsersInfo[1];
                 //double percentageForAlienator = allAlienatorsInfo.Item2;
                 double percentageForAcquirer = allAcquirersInfo.Item2;
-                var AllUsers = JObject.Parse(users_info);
+                var allUsers = JObject.Parse(usersInfo);
 
-                var AcquirersUsers = AllUsers["acquirers_users"];
+                var AcquirersUsers = allUsers[Globals.AcquirersUsersKey];
 
-                var AlienatorsUsers = AllUsers["alienators_users"];
+                var alienatorsUsers = allUsers[Globals.AlienatorsUsersKey];
                 ;
 
-                if (inscription.CNE == "Regularización de Patrimonio")
+                if (inscription.CNE == Globals.RegularizacionPatrimonioKey)
                 {
                     EquityRegulation(allAcquirersInfo, inscription);
                 } else if (inscription.CNE == "Compraventa")
@@ -188,13 +188,13 @@ namespace WebApplication1.Controllers
             List<Multyproperty> multypropertiesAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator);
 
             Multyproperty multyAlienator = multypropertiesAlienator[0];
-            double percentageTransfer = (double)(multyAlienator.Percentage * percentageAlienator) / 100;
+            double percentageTransfer = (double)(multyAlienator.Percentage * percentageAlienator) / Globals.MaxPercentage;
             double? percentageAlienatorBeforeChange = multyAlienator.Percentage;
-            multyAlienator.Percentage = multyAlienator.Percentage - percentageTransfer;
+            multyAlienator.Percentage -= percentageTransfer;
             db.Entry(multyAlienator);
             db.SaveChanges();
 
-            double percentageRecived = (double)(percentageAlienatorBeforeChange * percentageAcquirer) / 100;
+            double percentageRecived = (double)(percentageAlienatorBeforeChange * percentageAcquirer) / Globals.MaxPercentage;
             Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
             Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, percentageRecived, inscription);
            
@@ -236,10 +236,10 @@ namespace WebApplication1.Controllers
                 string rutAcquirer = acquirerInfo.Item1;
                 double percentageAcquirer = acquirerInfo.Item2;
                 Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
-                double percentageToRecive = (double)(sumPercentagetoTransfer * percentageAcquirer) / 100;
+                double percentageToRecive = (double)(sumPercentagetoTransfer * percentageAcquirer) / Globals.MaxPercentage;
                 Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, percentageToRecive, inscription);
                 List<Multyproperty> multypropertiesAcquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
-                if (multypropertiesAcquirer.Count > 0)
+                if (multypropertiesAcquirer.Count > Globals.EmptyKey)
                 {
                     Multyproperty multypropertyAcquirer = multypropertiesAcquirer[0];
                     multypropertyAcquirer.Percentage += percentageToRecive;
@@ -279,7 +279,7 @@ namespace WebApplication1.Controllers
                 Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
                 Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, percentageAcquirer, inscription);
                 List<Multyproperty> multypropertiesAcquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
-                if (multypropertiesAcquirer.Count > 0)
+                if (multypropertiesAcquirer.Count > Globals.EmptyKey)
                 {
                     Multyproperty multypropertyAcquirer = multypropertiesAcquirer[0];
                     multypropertyAcquirer.Percentage += percentageAcquirer;
@@ -293,29 +293,41 @@ namespace WebApplication1.Controllers
 
         }
 
-        private List<Tuple<List<Tuple<string, double>>, double, double>> GetUsersJsonToLists(string people_info)
+        //Example of returned object: List<Tuple<List<Tuple<string, double>>, double, double>> 
+        //{
+        //    ""alienators_users"": [
+        //        [""Alienator1"", 10.5],
+        //        [""Alienator2"", 15.75]
+        //    ],
+        //    ""acquirers_users"": [
+        //        [""Acquirer1"", 20.25],
+        //        [""Acquirer2"", 30.15],
+        //        [""Acquirer3"", 5.5]
+        //    ]
+        //}
+        private List<Tuple<List<Tuple<string, double>>, double, double>> GetUsersJsonToLists(string peopleInfo)
         {
             List<Tuple<List<Tuple<string, double>>, double, double>> allPeople = new List<Tuple<List<Tuple<string, double>>, double, double>>();
             List<Tuple<string, double>> alienators = new List<Tuple<string, double>>();
             List<Tuple<string, double>> acquirers = new List<Tuple<string, double>>();
-            var jsonUsers = JObject.Parse(people_info);
+            var jsonUsers = JObject.Parse(peopleInfo);
 
-            var AlienatorsUsers = jsonUsers["alienators_users"];
-            double sumPercentageAlienators = AlienatorsUsers.Sum(alienator => Convert.ToDouble(alienator[1]));
-            int countAlienators = AlienatorsUsers.Count(alienator => Convert.ToDouble(alienator[1]) == 0);
-            double percentageForAlienator = (100 - sumPercentageAlienators) / countAlienators;
+            var alienatorsUsers = jsonUsers[Globals.AlienatorsUsersKey];
+            double sumPercentageAlienators = alienatorsUsers.Sum(alienator => Convert.ToDouble(alienator[1]));
+            int countAlienators = alienatorsUsers.Count(alienator => Convert.ToDouble(alienator[1]) == 0);
+            double percentageForAlienator = (Globals.MaxPercentage - sumPercentageAlienators) / countAlienators;
 
-            var AcquirersUsers = jsonUsers["acquirers_users"];
+            var AcquirersUsers = jsonUsers[Globals.AcquirersUsersKey];
             double sumPercentageAcquirers = AcquirersUsers.Sum(aquirer => Convert.ToDouble(aquirer[1]));
             int countAcquirers = AcquirersUsers.Count(aquirer => Convert.ToDouble(aquirer[1]) == 0);
-            double percentageForAcquirer = (100 - sumPercentageAcquirers) / countAcquirers;
+            double percentageForAcquirer = (Globals.MaxPercentage - sumPercentageAcquirers) / countAcquirers;
 
-            if (jsonUsers.ContainsKey("alienators_users"))
+            if (jsonUsers.ContainsKey(Globals.AlienatorsUsersKey))
             {
-                foreach (var alienator_info in AlienatorsUsers)
+                foreach (var alienatorInfo in alienatorsUsers)
                 {
-                    string rutAlienator = alienator_info[0].ToString();
-                    double percentageAlienator = Convert.ToDouble(alienator_info[1]);
+                    string rutAlienator = alienatorInfo[0].ToString();
+                    double percentageAlienator = Convert.ToDouble(alienatorInfo[1]);
                     Tuple<string, double> alienatorTuple = new Tuple<string, double>(rutAlienator, percentageAlienator);
                     alienators.Add(alienatorTuple);
                 }
@@ -323,12 +335,12 @@ namespace WebApplication1.Controllers
                 allPeople.Add(allAlienatorsTuple);
             }
 
-            if (jsonUsers.ContainsKey("acquirers_users"))
+            if (jsonUsers.ContainsKey(Globals.AcquirersUsersKey))
             {
-                foreach (var acquirer_info in AcquirersUsers)
+                foreach (var acquirerInfo in AcquirersUsers)
                 {
-                    string rutAcquirer = acquirer_info[0].ToString();
-                    double percentageAcquirer = Convert.ToDouble(acquirer_info[1]);
+                    string rutAcquirer = acquirerInfo[0].ToString();
+                    double percentageAcquirer = Convert.ToDouble(acquirerInfo[1]);
                     Tuple<string, double> acquirerTuple = new Tuple<string, double>(rutAcquirer, percentageAcquirer);
                     acquirers.Add(acquirerTuple);
                 }
@@ -415,7 +427,7 @@ namespace WebApplication1.Controllers
         {
             List<Multyproperty> multyproperties = SearchMulypropertiesinDataBase(inscription);
             int? pastYear = null;
-            if (multyproperties.Count > 0)
+            if (multyproperties.Count > Globals.EmptyKey)
             {
                 pastYear = FindPastYear(year, multyproperties);
                 if (pastYear != null)
@@ -439,15 +451,15 @@ namespace WebApplication1.Controllers
             bool ifCreateMultyproperty = true;
             int? endYear = null;
             int yearOfStart;
-            if (inscription.InscriptionDate.Year < 2019) yearOfStart = 2019;
+            if (inscription.InscriptionDate.Year < Globals.OldestYearKey) yearOfStart = Globals.OldestYearKey;
             else yearOfStart = inscription.InscriptionDate.Year;
 
-            if (multyproperties.Count > 0)
+            if (multyproperties.Count > Globals.EmptyKey)
             {
                 List<Multyproperty> multypropertiesSameYear = multyproperties.Where(
                     mp => mp.StartCurrencyYear == yearOfStart
                     ).ToList();
-                if (multypropertiesSameYear.Count > 0)
+                if (multypropertiesSameYear.Count > Globals.EmptyKey)
                 {
                     foreach (Multyproperty sameYearMP in multypropertiesSameYear)
                     {
@@ -463,7 +475,7 @@ namespace WebApplication1.Controllers
 
                 multyproperties = SearchMulypropertiesinDataBase(inscription);
                 int? nextYear = null;
-                if (multyproperties.Count > 0 && ifCreateMultyproperty == true )
+                if (multyproperties.Count > Globals.EmptyKey && ifCreateMultyproperty == true )
                 {
                     ChangeFinishYearsInMultyproperties(yearOfStart, inscription);
                     nextYear = FindNextYear(yearOfStart, multyproperties);
@@ -488,14 +500,14 @@ namespace WebApplication1.Controllers
             bool ifCreateMultyproperty = true;
             int? endYear = null;
             int yearOfStart;
-            if (inscription.InscriptionDate.Year < 2019) yearOfStart = 2019;
+            if (inscription.InscriptionDate.Year < Globals.OldestYearKey) yearOfStart = Globals.OldestYearKey;
             else yearOfStart = inscription.InscriptionDate.Year;
-            if (multyproperties.Count > 0)
+            if (multyproperties.Count > Globals.EmptyKey)
             {
                 List<Multyproperty> multypropertiesSameYear = multyproperties.Where(
                     mp => mp.StartCurrencyYear == yearOfStart
                     ).ToList();
-                if (multypropertiesSameYear.Count > 0)
+                if (multypropertiesSameYear.Count > Globals.EmptyKey)
                 {
                     foreach (Multyproperty sameYearMP in multypropertiesSameYear)
                     {
@@ -559,7 +571,7 @@ namespace WebApplication1.Controllers
             double percentageForAlienators = alienatorsInfo.Item2;
             double sumPercentageAlienators = alienatorsInfo.Item3;
 
-            if (sumPercentageAcquirers == 100)
+            if (sumPercentageAcquirers == Globals.MaxPercentage)
             {
                 BuyingAndSellingPercentageEqualTo100(acquirers, alienators,inscription);
             }
@@ -592,11 +604,11 @@ namespace WebApplication1.Controllers
         {
             List<Multyproperty> newStateMultiproperties = SearchMulypropertiesinDataBase(inscription, year);
             double? sumActualPercentage = newStateMultiproperties.Sum(x => x.Percentage);
-            if (sumActualPercentage > 100)
+            if (sumActualPercentage > Globals.MaxPercentage)
             {
                 foreach (Multyproperty multyproperty in newStateMultiproperties)
                 {
-                    double? newPercentage = (double)(multyproperty.Percentage * 100) / sumActualPercentage;
+                    double? newPercentage = (double)(multyproperty.Percentage * Globals.MaxPercentage) / sumActualPercentage;
                     multyproperty.Percentage = Math.Round((double)newPercentage,2);
                     db.Entry(multyproperty);
                 }

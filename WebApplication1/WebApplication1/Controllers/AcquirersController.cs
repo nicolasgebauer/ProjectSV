@@ -22,13 +22,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Acquirers/Details/5
-        public ActionResult Details(string rut, int? atentionnumber)
+        public ActionResult Details(string rut, int? atentionNumber)
         {
-            if (rut == null && atentionnumber == null)
+            if (rut == null && atentionNumber == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Acquirer acquirer = db.Acquirers.Find(atentionnumber, rut);
+            Acquirer acquirer = db.Acquirers.Find(atentionNumber, rut);
             if (acquirer == null)
             {
                 return HttpNotFound();
@@ -64,13 +64,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Acquirers/Edit/5
-        public ActionResult Edit(string rut, int? atentionnumber)
+        public ActionResult Edit(string rut, int? atentionNumber)
         {
-            if (rut == null && atentionnumber == null)
+            if (rut == null && atentionNumber == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Acquirer acquirer = db.Acquirers.Find(atentionnumber, rut);
+            Acquirer acquirer = db.Acquirers.Find(atentionNumber, rut);
             if (acquirer == null)
             {
                 return HttpNotFound();
@@ -99,13 +99,13 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Acquirers/Delete/5
-        public ActionResult Delete(string rut, int? atentionnumber)
+        public ActionResult Delete(string rut, int? atentionNumber)
         {
-            if (rut == null && atentionnumber == null)
+            if (rut == null && atentionNumber == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Acquirer acquirer = db.Acquirers.Find(atentionnumber, rut);
+            Acquirer acquirer = db.Acquirers.Find(atentionNumber, rut);
             if (acquirer == null)
             {
                 return HttpNotFound();
@@ -116,9 +116,9 @@ namespace WebApplication1.Controllers
         // POST: Acquirers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string rut, int? atentionnumber)
+        public ActionResult DeleteConfirmed(string rut, int? atentionNumber)
         {
-            Acquirer acquirer = db.Acquirers.Find(atentionnumber, rut);
+            Acquirer acquirer = db.Acquirers.Find(atentionNumber, rut);
             db.Acquirers.Remove(acquirer);
             db.SaveChanges();
             return RedirectToAction("Index");

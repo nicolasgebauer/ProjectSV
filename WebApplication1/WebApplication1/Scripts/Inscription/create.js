@@ -1,4 +1,4 @@
-﻿const AllUsers = {
+﻿const allUsers = {
     alienators_users: [],
     acquirers_users: []
 }
@@ -63,11 +63,11 @@ NewAlienator.addEventListener('click', () => {
     var rut = AlienatorRUT.value
     var percent = PercentAlienator.value
     if (NotPercentAlienator.checked) {              //Alienators with no defined percentage are added with -1 to distinguish them
-        AllUsers.alienators_users.push([rut, -1])
+        allUsers.alienators_users.push([rut, -1])
         RutCellAlienator.innerHTML = rut;
         PercentCellAlienator.innerHTML = "";
     } else {
-        AllUsers.alienators_users.push([rut, percent])
+        allUsers.alienators_users.push([rut, percent])
         RutCellAlienator.innerHTML = rut;
         PercentCellAlienator.innerHTML = percent;
     }
@@ -78,7 +78,7 @@ NewAlienator.addEventListener('click', () => {
 
 AcquirerRUT.addEventListener('input', (event) => { //Verifies if the RUT is not repeated and if it only has numbers
     const rut = event.target.value;
-    const rutExists = AllUsers.acquirers_users.some(user => user[0] === rut);
+    const rutExists = allUsers.acquirers_users.some(user => user[0] === rut);
     if (!rutRegex.test(rut)) {
         disableButton();
         showError();
@@ -101,8 +101,8 @@ PercentAcquirer.addEventListener('input', (event) => {
         return;
     }
 
-    for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
-        const percentage = parseInt(AllUsers.acquirers_users[i][1]);
+    for (let i = 0; i < allUsers.acquirers_users.length; i++) {
+        const percentage = parseInt(allUsers.acquirers_users[i][1]);
         if (percentage !== -1) {
             sum += percentage;
         }
@@ -149,11 +149,11 @@ NewAcquirer.addEventListener('click', (event) => {
     var percent = PercentAcquirer.value;
 
     if (NotPercentAcquirer.checked) {
-        AllUsers.acquirers_users.push([rut, -1]);
+        allUsers.acquirers_users.push([rut, -1]);
         RutCellAcquirer.innerHTML = rut;
         PercentCellAcquirer.innerHTML = "";
     } else {
-        AllUsers.acquirers_users.push([rut, percent]);
+        allUsers.acquirers_users.push([rut, percent]);
         RutCellAcquirer.innerHTML = rut;
         PercentCellAcquirer.innerHTML = percent;
     }
@@ -175,18 +175,18 @@ NotPercentAcquirer.addEventListener('change', () => {
 
 
 SubmitButtonInscription.addEventListener('click', (event) => {
-    for (let i = 0; i < AllUsers.acquirers_users.length; i++) {
-        const percentage = parseFloat(AllUsers.acquirers_users[i][1]);
+    for (let i = 0; i < allUsers.acquirers_users.length; i++) {
+        const percentage = parseFloat(allUsers.acquirers_users[i][1]);
         if (percentage == -1) {
-            AllUsers.acquirers_users[i][1] = 0;
+            allUsers.acquirers_users[i][1] = 0;
         }
     }
-    for (let i = 0; i < AllUsers.alienators_users.length; i++) {
-        const percentage = parseFloat(AllUsers.alienators_users[i][1]);
+    for (let i = 0; i < allUsers.alienators_users.length; i++) {
+        const percentage = parseFloat(allUsers.alienators_users[i][1]);
         if (percentage == -1) {
-            AllUsers.alienators_users[i][1] = 0;
+            allUsers.alienators_users[i][1] = 0;
         }
     }
 
-    SubmitButtonInscription.value = JSON.stringify(AllUsers)
+    SubmitButtonInscription.value = JSON.stringify(allUsers)
 });

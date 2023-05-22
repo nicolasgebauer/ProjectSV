@@ -131,6 +131,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AcquirersController.cs" />
     <Compile Include="Controllers\AlienatorsController.cs" />
+    <Compile Include="Controllers\Class1.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InscriptionsController.cs" />
     <Compile Include="Controllers\MultypropertiesController.cs" />
