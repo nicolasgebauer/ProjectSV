@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -589,7 +590,6 @@ namespace WebApplication1.Controllers
                 else
                 {
                     multypropertyAlienator.EndCurrencyYear = year - 1;
-                    db.Entry(multypropertyAlienator);
                 }
                 db.SaveChanges();
             }
