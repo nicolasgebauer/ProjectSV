@@ -3,6 +3,9 @@
     acquirers_users: []
 }
 
+var InscriptionField = document.querySelector('#date_inscription');
+var ActualDate = new Date().toISOString().split('T')[0];
+InscriptionField.min = ActualDate;
 
 const NewAlienator = document.querySelector("#new_alienator");
 const AlienatorRUT = document.querySelector("#rut_alienator");
@@ -37,6 +40,17 @@ const blockValue = document.getElementById("blok_input").value;
 const siteValue = document.getElementById("site_input").value;
 const pageValue = document.getElementById("page_input").value;
 const inscriptionNumberValue = document.getElementById("inscription_number_input").value;
+
+
+
+
+InscriptionField.addEventListener('change', function () {
+    var InscriptionDate = new Date(this.value);
+    if (InscriptionDate > new Date()) {
+        alert("La fecha de inscripción no puede ser una fecha futura.");
+        this.value = '';
+    }
+});
 
 cneSelect.addEventListener("change", () => {      // if the CNE is Regularización de Patrimonio, the Enanejantes form dissapears
     if (cneSelect.value === "Regularización de Patrimonio") {
