@@ -303,7 +303,7 @@ namespace WebApplication1.Controllers
         }
 
         // EquityRegulation == Regularizacion de Patrimonio
-        // This function contais all de algorithm of Equity Reluration
+        // This function contais all de algorithm of Equity Regulation
         private void EquityRegulation(Tuple<List<Tuple<string, double>>, double, double> acquirersInfo, Inscription inscription)
         {
             List<Tuple<string, double>> acquirers = acquirersInfo.Item1;

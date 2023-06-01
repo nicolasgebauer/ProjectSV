@@ -19,9 +19,16 @@ const AcquirerTable = document.querySelector("#acquirers").getElementsByTagName(
 const SubmitButtonInscription = document.querySelector("#submit_button");
 const errorDiv = document.createElement('div');
 errorDiv.className = "alert alert-info";
-errorDiv.innerHTML = "Comprobar que el RUT no haya sido ingresado, que no tenga puntos ni guión y que la suma de porcentajes sea menor a 100";
+errorDiv.innerHTML = "El Rut debe ser válido";
 errorDiv.style.display = "none";
+
+const errorDivAlienator = document.createElement('div');
+errorDivAlienator.className = "alert alert-info";
+errorDivAlienator.innerHTML = "El Rut debe ser válido";
+errorDivAlienator.style.display = "none";
+
 NewAcquirer.insertAdjacentElement('afterend', errorDiv);
+NewAlienator.insertAdjacentElement('afterend', errorDivAlienator);
 const cneSelect = document.querySelector("#cne_select");
 const allAlienatorsDiv = document.querySelector("#all_alienators");
 const rutRegex = /^[0-9]+$/;
@@ -43,8 +50,6 @@ cneSelect.addEventListener("change", () => {      // if the CNE is Regularizaci�
     }
 });
 
-
-
 NotPercentAlienator.addEventListener('change', () => {   //button of percentage's visibility
     if (NotPercentAlienator.checked) {
         PercentAlienator.disabled = true;
@@ -52,9 +57,6 @@ NotPercentAlienator.addEventListener('change', () => {   //button of percentage'
         PercentAlienator.disabled = false;
     }
 });
-
-
-
 
 NewAlienator.addEventListener('click', () => {
     const NewRowAlienator = AlienatorTable.insertRow()
@@ -79,15 +81,27 @@ NewAlienator.addEventListener('click', () => {
 AcquirerRUT.addEventListener('input', (event) => { //Verifies if the RUT is not repeated and if it only has numbers
     const rut = event.target.value;
     const rutExists = allUsers.acquirers_users.some(user => user[0] === rut);
-    if (!rutRegex.test(rut)) {
-        disableButton();
-        showError();
-    } else if (rutExists) {
-        disableButton();
-        showError();
+    const isValidRUT = validateRUT(rut);
+
+    if (!isValidRUT || rutExists) {
+        disableButton(NewAcquirer);
+        showError(errorDiv);
     } else {
-        enableButton();
-        hideError();
+        enableButton(NewAcquirer);
+        hideError(errorDiv);
+    }
+});
+
+AlienatorRUT.addEventListener('input', (event) => {
+    const rut = event.target.value;
+    const rutExists = allUsers.alienators_users.some(user => user[0] == rut);
+    const isValidRUT = validateRUT(rut);
+    if (!isValidRUT || rutExists) {
+        disableButton(NewAlienator);
+        showError(errorDivAlienator);
+    } else {
+        enableButton(NewAlienator);
+        hideError(errorDivAlienator);
     }
 });
 
@@ -96,8 +110,8 @@ PercentAcquirer.addEventListener('input', (event) => {
     const percent = parseInt(event.target.value);
     //checks if the sum of percentages is greater than 100
     if (isNaN(percent) || percent < 0 || percent > 100) {
-        disableButton();
-        showError();
+        disableButton(NewAcquirer);
+        showError(errorDiv);
         return;
     }
 
@@ -110,31 +124,29 @@ PercentAcquirer.addEventListener('input', (event) => {
     sum += percent;
 
     if (sum > 100) {
-        disableButton();
-        showError();
+        disableButton(NewAcquirer);
+        showError(errorDiv);
     } else {
-        enableButton();
-        hideError();
+        enableButton(NewAcquirer);
+        hideError(errorDiv);
     }
 });
 
-
-
-function disableButton() {
-    NewAcquirer.disabled = true;
+function disableButton(button) {
+    button.disabled = true;
 }
 
-function enableButton() {
-    NewAcquirer.disabled = false;
+function enableButton(button) {
+    button.disabled = false;
 }
 
-function showError() {
-    errorDiv.style.display = "block";
+function showError(error) {
+    error.style.display = "block";
 
 }
 
-function hideError() {
-    errorDiv.style.display = "none";
+function hideError(error) {
+    error.style.display = "none";
 }
 
 function findRUT(element, rut) {
@@ -166,8 +178,8 @@ NotPercentAcquirer.addEventListener('change', () => {
     if (NotPercentAcquirer.checked) {
         PercentAcquirer.disabled = true;
         PercentAcquirer.value = "";
-        enableButton();
-        hideError();
+        enableButton(NewAcquirer);
+        hideError(errorDiv);
     } else {
         PercentAcquirer.disabled = false;
     }
@@ -190,3 +202,33 @@ SubmitButtonInscription.addEventListener('click', (event) => {
 
     SubmitButtonInscription.value = JSON.stringify(allUsers)
 });
+
+function validateRUT(rut) {
+    const rutRegex = /^[0-9]+-[0-9kK]{1}$/;
+    if (!rutRegex.test(rut)) {
+        return false;
+    }
+    const [mantisa, dv] = rut.split("-");
+    const dvUpperCase = dv.toUpperCase();
+    const calculatedDV = calculateDV(mantisa);
+    return dvUpperCase === calculatedDV;
+}
+
+function calculateDV(mantisa) {
+    const rutDigits = mantisa.split("").reverse();
+    let factor = 2;
+    let sum = 0;
+    for (let i = 0; i < rutDigits.length; i++) {
+        sum += parseInt(rutDigits[i]) * factor;
+        factor = factor === 7 ? 2 : factor + 1;
+    }
+    const remainder = sum % 11;
+    const calculatedDV = 11 - remainder;
+    if (calculatedDV === 11) {
+        return "0";
+    } else if (calculatedDV === 10) {
+        return "K";
+    } else {
+        return calculatedDV.toString();
+    }
+}
