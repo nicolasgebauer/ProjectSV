@@ -4,8 +4,12 @@
 }
 
 var InscriptionField = document.querySelector('#date_inscription');
-var ActualDate = new Date().toISOString().split('T')[0];
-InscriptionField.min = ActualDate;
+var currentDate = new Date();
+var year = currentDate.getFullYear();
+var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+var day = String(currentDate.getDate()).padStart(2, '0');
+var ActualDate = `${year}-${month}-${day}`;
+InscriptionField.max = ActualDate;
 
 const NewAlienator = document.querySelector("#new_alienator");
 const AlienatorRUT = document.querySelector("#rut_alienator");
