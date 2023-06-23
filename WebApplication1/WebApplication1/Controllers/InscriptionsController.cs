@@ -57,7 +57,6 @@ namespace WebApplication1.Controllers
             {
                 db.Inscriptions.Add(inscription);
                 db.SaveChanges();
-
                 List<Tuple<List<Tuple<string, double>>, double, double>> allUsersInfo = GetUsersJsonToLists(usersInfo);
                 Tuple<List<Tuple<string, double>>, double, double> allAlienatorsInfo = allUsersInfo[0];
                 Tuple<List<Tuple<string, double>>, double, double> allAcquirersInfo = allUsersInfo[1];
@@ -176,38 +175,51 @@ namespace WebApplication1.Controllers
             db.SaveChanges();
         }
 
-        //Function that is responsible for serching in data base all the multyproperties by one of the three option search
-        private List<Multyproperty> SearchMulypropertiesinDataBase(Inscription inscription, int? year = null, string rut = null)
+        //Function that is responsible for searching in database all the multyproperties by one of the three option search
+        private List<Multyproperty> SearchMulypropertiesinDataBase(Inscription inscription, int? year = null, string rut = null, int? ghostCase = null)
         {
             List<Multyproperty> multyproperties = new List<Multyproperty>();
-            if (rut == null && year == null)
+            if (ghostCase != null) //we want multiproperties of a period of time
             {
                 multyproperties = db.Multyproperties.Where(
-                mp => mp.Comunne == inscription.Comunne
-                && mp.Block == inscription.Block
-                && mp.Site == inscription.Site
-                && mp.AtentionNumber != inscription.AtentionNumber
-                ).OrderByDescending(mp => mp.InscriptionDate).ToList();
-            }
-            else if (rut == null)
-            {
-                multyproperties = db.Multyproperties.Where(
-                mp => mp.Comunne == inscription.Comunne
-                && mp.Block == inscription.Block
-                && mp.Site == inscription.Site
-                && mp.StartCurrencyYear == year
-                ).OrderByDescending(mp => mp.InscriptionDate).ToList();
+                    mp => mp.Comunne == inscription.Comunne
+                        && mp.Block == inscription.Block
+                        && mp.Site == inscription.Site
+                        && mp.StartCurrencyYear <= year  
+                        && (mp.EndCurrencyYear == null || mp.EndCurrencyYear >= year) 
+                    ).OrderByDescending(mp => mp.InscriptionDate).ToList();
             }
             else
             {
-                multyproperties = db.Multyproperties.Where(
-                mp => mp.Comunne == inscription.Comunne
-                && mp.Block == inscription.Block
-                && mp.Site == inscription.Site
-                && mp.AtentionNumber != inscription.AtentionNumber
-                && mp.Rut == rut
-                && mp.InscriptionYear <= year
-                ).OrderByDescending(mp => mp.InscriptionDate).ToList();
+                if (rut == null && year == null)
+                {
+                    multyproperties = db.Multyproperties.Where(
+                    mp => mp.Comunne == inscription.Comunne
+                    && mp.Block == inscription.Block
+                    && mp.Site == inscription.Site
+                    && mp.AtentionNumber != inscription.AtentionNumber
+                    ).OrderByDescending(mp => mp.InscriptionDate).ToList();
+                }
+                else if (rut == null)
+                {
+                    multyproperties = db.Multyproperties.Where(
+                    mp => mp.Comunne == inscription.Comunne
+                    && mp.Block == inscription.Block
+                    && mp.Site == inscription.Site
+                    && mp.StartCurrencyYear == year
+                    ).OrderByDescending(mp => mp.InscriptionDate).ToList(); //Results are given in descendant order by inscription date.
+                }
+                else
+                {
+                    multyproperties = db.Multyproperties.Where(
+                    mp => mp.Comunne == inscription.Comunne
+                    && mp.Block == inscription.Block
+                    && mp.Site == inscription.Site
+                    && mp.AtentionNumber != inscription.AtentionNumber
+                    && mp.Rut == rut
+                    && mp.InscriptionYear <= year
+                    ).OrderByDescending(mp => mp.InscriptionDate).ToList();
+                }
             }
             return multyproperties;
         }
@@ -362,6 +374,7 @@ namespace WebApplication1.Controllers
         //Function that is responsible for creating the instances of Aquirers
         private Acquirer CreateAcquirer(Person person, double percentage, Inscription inscription)
         {
+            
             Acquirer acquirer = new Acquirer();
             acquirer.AtentionNumber = inscription.AtentionNumber;
             acquirer.Rut = person.Rut;
@@ -573,33 +586,69 @@ namespace WebApplication1.Controllers
         {
             int year = inscription.InscriptionDate.Year;
             double? sumPercentagetoTransfer = 0;
+            List<Alienator> ghostAlienators = new List<Alienator>(); // Lista para almacenar los enajenantes fantasma
+ 
             foreach (var alienatorInfo in alienators)
             {
                 string rutAlienator = alienatorInfo.Item1;
                 double percentageAlienator = alienatorInfo.Item2;
                 Person alienatorPerson = CreateOrSetPerson(rutAlienator);
-                Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
-                Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator)[0];
-                sumPercentagetoTransfer += multypropertyAlienator.Percentage;
-                if (multypropertyAlienator.StartCurrencyYear == year) db.Multyproperties.Remove(multypropertyAlienator);
-                else if (multypropertyAlienator.StartCurrencyYear <= Globals.OldestYearKey && year <= Globals.OldestYearKey)
+                
+                Console.WriteLine(SearchMulypropertiesinDataBase(inscription, year, rutAlienator).Count);
+                if (SearchMulypropertiesinDataBase(inscription, year, rutAlienator).Count == 0)
                 {
-                    if(Convert.ToDouble(inscription.InscriptionNumber) >= Convert.ToDouble(multypropertyAlienator.InscriptionNumber))
-                    db.Multyproperties.Remove(multypropertyAlienator);
+                    Alienator alienatorGhostInstance = CreateAlienator(alienatorPerson, 0, inscription);
+                    ghostAlienators.Add(alienatorGhostInstance);
+                    continue;
                 }
                 else
                 {
-                    multypropertyAlienator.EndCurrencyYear = year - 1;
+                    Alienator alienatorInstance = CreateAlienator(alienatorPerson, percentageAlienator, inscription);
+                    Multyproperty multypropertyAlienator = SearchMulypropertiesinDataBase(inscription, year, rutAlienator)[0];
+                    sumPercentagetoTransfer += multypropertyAlienator.Percentage;
+                    if (multypropertyAlienator.StartCurrencyYear == year)
+                    {
+                        db.Multyproperties.Remove(multypropertyAlienator);
+                    }
+                    else if (multypropertyAlienator.StartCurrencyYear <= Globals.OldestYearKey && year <= Globals.OldestYearKey)
+                    {
+                        if (Convert.ToDouble(inscription.InscriptionNumber) >= Convert.ToDouble(multypropertyAlienator.InscriptionNumber))
+                        {
+                            db.Multyproperties.Remove(multypropertyAlienator);     
+                        }
+                    }
+                    else
+                    {
+                        multypropertyAlienator.EndCurrencyYear = year - 1;
+                    }
                 }
-                db.SaveChanges();
             }
+            List<Multyproperty> actualMultiproperties = null;
+            if (alienators.Count == ghostAlienators.Count) //total of percentage of alienators equals to 0 (all ghost alienators)
+            {
+                sumPercentagetoTransfer = Globals.MaxPercentage;
+                actualMultiproperties = SearchMulypropertiesinDataBase(inscription, year, null, 1);
+                foreach (var multiproperty in actualMultiproperties)
+                {
+                    sumPercentagetoTransfer += multiproperty.Percentage;
+                }
+            }
+            db.SaveChanges();
             foreach (var acquirerInfo in acquirers)
             {
                 string rutAcquirer = acquirerInfo.Item1;
                 double percentageAcquirer = acquirerInfo.Item2;
                 if (percentageAcquirer == 0) percentageAcquirer = acquirersPercentage;
                 Person acquirerPerson = CreateOrSetPerson(rutAcquirer);
-                double percentageToRecive = (double)(sumPercentagetoTransfer * percentageAcquirer) / Globals.MaxPercentage;
+                double percentageToRecive;
+                if (alienators.Count == ghostAlienators.Count)
+                {
+                    percentageToRecive = (double)(percentageAcquirer/sumPercentagetoTransfer) * Globals.MaxPercentage;
+                }
+                else
+                {
+                    percentageToRecive = (double)(sumPercentagetoTransfer * percentageAcquirer) / Globals.MaxPercentage;
+                }
                 Acquirer acquirerInstance = CreateAcquirer(acquirerPerson, percentageToRecive, inscription);
                 List<Multyproperty> multypropertiesAcquirer = SearchMulypropertiesinDataBase(inscription, year, rutAcquirer);
                 if (multypropertiesAcquirer.Count > Globals.EmptyKey)
@@ -612,8 +661,19 @@ namespace WebApplication1.Controllers
                 else CreateMultypropertyForBuyingAndSelling(acquirerInstance, inscription);
                 StandardizeMultyproperties(year, inscription);
             }
+       
+            if (alienators.Count == ghostAlienators.Count)
+            {
+ 
+                foreach (var oldMultiproperty in actualMultiproperties)
+                {
+                    if (oldMultiproperty.EndCurrencyYear ==null) {
+                        oldMultiproperty.EndCurrencyYear = year - 1;
+                    }
+                    CreateMultyproperty(oldMultiproperty.Rut, (oldMultiproperty.Percentage / sumPercentagetoTransfer) * Globals.MaxPercentage, year, null, inscription);
+                }
+            }
         }
-
         public void BuyingAndSellingThirdCase(List<Tuple<string, double>> acquirers, List<Tuple<string, double>> alienators, Inscription inscription)
         {
             int year = inscription.InscriptionDate.Year;
@@ -655,6 +715,8 @@ namespace WebApplication1.Controllers
             StandardizeMultyproperties(year, inscription);
 
         }
+
+        
     }
 
 }
